@@ -1,0 +1,339 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 0;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* 三栏布局 */
+.practice-layout {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  padding: 20px;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+/* 通用列样式 */
+.column {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.column-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #eee;
+  font-family: "SimHei", "黑体", sans-serif;
+}
+
+/* 第一栏：起卦原则 */
+.principles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.principle-item {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.principle-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.principle-number {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.principle-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.principle-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.principle-desc {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
+}
+
+/* 第二栏：起卦方法 */
+.methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.method-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.method-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.method-icon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.method-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.method-desc {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.3;
+}
+
+/* 第三栏：起卦实践 */
+.practice-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  justify-content: center;
+}
+
+.practice-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.practice-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.coin-btn {
+  background: linear-gradient(135deg, #f5f7fa 0%, #fcb69f 100%);
+}
+
+.time-btn {
+  background: linear-gradient(135deg, #c3cfe2 0%, #a1c4fd 100%);
+}
+
+.number-btn {
+  background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+}
+
+.character-btn {
+  background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+}
+
+.btn-icon {
+  font-size: 48px;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .practice-layout {
+    flex-direction: column;
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .column {
+    padding: 15px;
+  }
+  
+  .column-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .principle-item, .method-item {
+    padding: 12px;
+  }
+  
+  .practice-btn {
+    padding: 20px;
+  }
+  
+  .btn-icon {
+    font-size: 36px;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .btn-text {
+    font-size: 16px;
+  }
+}
+
+/* 超小屏幕适配 */
+@media (max-width: 480px) {
+  .practice-layout {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .column {
+    padding: 12px;
+  }
+  
+  .principle-item, .method-item {
+    padding: 10px;
+  }
+  
+  .principle-number {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  
+  .method-icon {
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+  }
+  
+  .practice-btn {
+    padding: 16px;
+  }
+  
+  .btn-icon {
+    font-size: 32px;
+    width: 50px;
+    height: 50px;
+  }
+}
+
+.history-section {
+  margin-top: 32px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 18px 16px 12px 16px;
+}
+.history-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #667eea;
+  margin-bottom: 12px;
+  text-align: left;
+}
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.history-item {
+  padding: 10px 12px;
+  background: linear-gradient(90deg, #e0e7ff 0%, #f8fafc 100%);
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(102,126,234,0.06);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.history-item:active {
+  box-shadow: 0 2px 8px rgba(102,126,234,0.18);
+}
+.history-time {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 2px;
+}
+.history-gua {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+}
+.history-bian {
+  font-size: 13px;
+  color: #e67e22;
+  margin-left: 8px;
+}
+.history-empty {
+  color: #aaa;
+  font-size: 14px;
+  text-align: center;
+  margin: 16px 0;
+} 

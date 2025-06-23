@@ -1,0 +1,8 @@
+{
+    "disablePrivate": false,
+    "setting": {
+        "autoCompile": true,
+        "mockLogin": true,
+        "autoPush": true
+    }
+}

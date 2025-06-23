@@ -1,0 +1,68 @@
+<view class="container">
+  <!-- 讨论内容列表 -->
+  <view class="discussion-list">
+    <view class="list-title">易学争鸣</view>
+    <view class="discussion-container">
+      <view 
+        class="discussion-item" 
+        tt:for="{{discussionList}}" 
+        tt:key="id"
+        bindtap="onDiscussionItemTap"
+        data-index="{{index}}"
+      >
+        <!-- 讨论标题 -->
+        <view class="discussion-title">{{item.title}}</view>
+        
+        <!-- 正反观点对比 -->
+        <view class="views-container">
+          <!-- 正方观点 -->
+          <view class="view-section pro-view">
+            <view class="view-header">
+              <view class="view-icon">📖</view>
+              <view class="view-label">正方观点</view>
+            </view>
+            <view class="view-content">{{item.pro.view}}</view>
+            <view class="view-details">
+              <view class="detail-item">
+                <view class="detail-label">优势：</view>
+                <view class="detail-text">{{item.pro.advantage}}</view>
+              </view>
+              <view class="detail-item">
+                <view class="detail-label">不足：</view>
+                <view class="detail-text">{{item.pro.disadvantage}}</view>
+              </view>
+            </view>
+          </view>
+          
+          <!-- 反方观点 -->
+          <view class="view-section con-view">
+            <view class="view-header">
+              <view class="view-icon">💡</view>
+              <view class="view-label">反方观点</view>
+            </view>
+            <view class="view-content">{{item.con.view}}</view>
+            <view class="view-details">
+              <view class="detail-item">
+                <view class="detail-label">优势：</view>
+                <view class="detail-text">{{item.con.advantage}}</view>
+              </view>
+              <view class="detail-item">
+                <view class="detail-label">不足：</view>
+                <view class="detail-text">{{item.con.disadvantage}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 机械观点 -->
+        <view class="personal-view">
+          <view class="personal-header">
+            <view class="personal-icon">⚙️</view>
+            <view class="personal-label">机械观点</view>
+          </view>
+          <view class="personal-content">{{item.personalView}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> 

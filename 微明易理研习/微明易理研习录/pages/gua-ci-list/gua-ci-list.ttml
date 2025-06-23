@@ -1,0 +1,42 @@
+<view class="container">
+  <!-- 64卦列表 -->
+  <view class="gua-list">
+    <view class="list-title">六十四卦</view>
+    <view class="gua-list-container">
+      <view 
+        class="gua-item {{item.completed ? 'gua-completed' : 'gua-incomplete'}}" 
+        tt:for="{{guaList}}" 
+        tt:key="index"
+        bindtap="onGuaTap"
+        data-index="{{index}}"
+      >
+        <!-- 左侧圆形缩略图 -->
+        <view class="gua-thumbnail">
+          <image 
+            id="gua-image-{{index}}"
+            src="{{item.image}}" 
+            class="gua-image" 
+            mode="aspectFill"
+            bindload="onImageLoad"
+            binderror="onImageError"
+            data-index="{{index}}"
+          />
+          <view class="gua-name-overlay">
+            <!-- 根据字数显示不同布局 -->
+            <view tt:if="{{item.guaName.length === 1}}" class="single-char">{{item.guaName}}</view>
+            <view tt:elif="{{item.guaName.length === 2}}" class="double-char">
+              <text class="char-left">{{item.guaName[0]}}</text>
+              <text class="char-right">{{item.guaName[1]}}</text>
+            </view>
+          </view>
+        </view>
+        
+        <!-- 右侧信息 -->
+        <view class="gua-info">
+          <view class="gua-symbol">{{item.guaCi}}</view>
+          <view class="gua-desc">{{item.explanation}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

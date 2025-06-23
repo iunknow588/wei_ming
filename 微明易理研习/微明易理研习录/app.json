@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/gua-ci-list/gua-ci-list",
+    "pages/practice/practice",
+    "pages/discussion/discussion",
+    "pages/user-profile/user-profile",
+    "pages/gua-detail/gua-detail",
+    "pages/coin-divination/coin-divination",
+    "pages/time-divination/time-divination",
+    "pages/number-divination/number-divination",
+    "pages/character-divination/character-divination",
+    "pages/interpretation/interpretation",
+    "pages/result-analysis/result-analysis"
+  ],
+  "window": {
+    "navigationBarTitleText": "微明.易理研习录",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#7A7E83",
+    "selectedColor": "#3cc51f",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/gua-ci-list/gua-ci-list",
+        "iconPath": "assets/tab_1_gray.png",
+        "selectedIconPath": "assets/tab_1.png",
+        "text": "学习"
+      },
+      {
+        "pagePath": "pages/practice/practice",
+        "iconPath": "assets/tab_2_gray.png",
+        "selectedIconPath": "assets/tab_2.png",
+        "text": "研习"
+      },
+      {
+        "pagePath": "pages/discussion/discussion",
+        "iconPath": "assets/tab_3_gray.png",
+        "selectedIconPath": "assets/tab_3.png",
+        "text": "争鸣"
+      },
+      {
+        "pagePath": "pages/user-profile/user-profile",
+        "iconPath": "assets/tab_4_gray.png",
+        "selectedIconPath": "assets/tab_4.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "privacy": {
+    "scope.userInfo": {
+      "desc": "用于展示用户信息，提供个性化体验"
+    }
+  }
+}

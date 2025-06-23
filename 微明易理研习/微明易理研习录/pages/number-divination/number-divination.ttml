@@ -1,0 +1,20 @@
+<view class="container">
+  <view class="title">数字起卦法</view>
+  <view class="form">
+    <view class="form-row">
+      <text>十位数：</text>
+      <input type="number" value="{{ten}}" data-field="ten" bindinput="onInputChange" maxlength="1" />
+    </view>
+    <view class="form-row">
+      <text>个位数：</text>
+      <input type="number" value="{{unit}}" data-field="unit" bindinput="onInputChange" maxlength="1" />
+    </view>
+  </view>
+  <view class="result">
+    <text>上卦数：{{result.upper}}</text>
+    <text>下卦数：{{result.lower}}</text>
+    <text>动爻数：{{result.moving}}</text>
+    <text>卦象：{{result.guaName}}</text>
+  </view>
+  <button bindtap="onBack">返回</button>
+</view> 

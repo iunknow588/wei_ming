@@ -1,0 +1,16 @@
+{
+    "setting": {
+        "urlCheck": true,
+        "es6": true,
+        "postcss": true,
+        "minified": true,
+        "newFeature": true,
+        "autoCompile": true,
+        "compileHotReLoad": true,
+        "nativeCompile": true,
+        "libVersion": "2.32.0"
+    },
+    "appid": "tt7aed0c50e5e4402101",
+    "projectname": "微明易理研习录",
+    "douyinProjectType": "native"
+}

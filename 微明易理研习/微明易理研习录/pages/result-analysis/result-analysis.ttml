@@ -1,0 +1,72 @@
+<view class="container">
+  <view class="result-title">结果解析</view>
+  <view class="yao-display-area">
+    <view class="yao-display-title">爻象结果（从底向上）</view>
+    <view class="yao-display-content">
+      <view class="yao-item {{item.isEmpty ? 'empty' : ''}}" tt:for="{{yaoResults}}" tt:key="index">
+        <view class="yao-number">{{item.number}}</view>
+        <view class="yao-symbol {{item.result.type}}" tt:if="{{!item.isEmpty}}">{{item.result.symbol}}</view>
+        <view class="yao-symbol empty" tt:if="{{item.isEmpty}}">—</view>
+        <view class="yao-desc" tt:if="{{!item.isEmpty}}">{{item.result.desc}}</view>
+        <view class="yao-desc empty" tt:if="{{item.isEmpty}}">待摇卦</view>
+        <view class="coin-status" tt:if="{{!item.isEmpty && item.result.coinStatusText}}">
+          <text class="coin-status-text">[{{item.result.coinStatusText}}]</text>
+        </view>
+      </view>
+      <view class="yao-progress" tt:if="{{currentRound < totalRounds}}">
+        <view class="progress-text">进度: {{currentRound}}/{{totalRounds}}</view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{(currentRound / totalRounds) * 100}}%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="result-area">
+    <view class="result-title">卦象解析</view>
+    <view class="interpretation-hint" tt:if="{{interpretationMethod}}">
+      <view class="hint-title">解读方法：{{interpretationMethod.type}}</view>
+      <view class="hint-desc">{{interpretationMethod.description}}</view>
+    </view>
+    <view class="result-content">
+      <view class="final-gua-display">
+        <view class="gua-title">本卦：<text class="gua-name">{{originalGuaName}}</text>（从底向上）</view>
+        <view class="gua-symbols">
+          <view class="gua-yao {{item.isBian ? 'primary-highlight' : ''}} {{item.type}}" tt:for="{{originalGuaDetail}}" tt:key="index">
+            {{item.symbol}}
+          </view>
+        </view>
+        <view class="gua-content" tt:if="{{originalGuaInfo}}">
+          <view class="gua-ci {{interpretationMethod.highlightInfo[0] ? 'primary-highlight' : ''}}">
+            <text tt:if="{{interpretationMethod.highlightInfo[0]}}">★</text>卦辞：{{originalGuaInfo.guaCi}}
+          </view>
+          <view class="yong-jiu-liu" tt:if="{{interpretationMethod.highlightInfo[6]}}">
+            <view class="yao-ci-item primary-highlight">{{originalGuaInfo.yaoCi[6]}}</view>
+          </view>
+          <view class="yao-ci-list">
+            <view class="yao-ci-item {{interpretationMethod.highlightInfo[index + 1] ? 'primary-highlight' : ''}}" 
+                  tt:for="{{originalGuaInfo.yaoCi}}" tt:key="index">
+              <text tt:if="{{interpretationMethod.highlightInfo[index + 1]}}">★</text>{{item}}
+            </view>
+          </view>
+        </view>
+        <view class="gua-title">变卦：<text class="gua-name">{{changedGuaName}}</text>（从底向上）</view>
+        <view class="gua-symbols">
+          <view class="gua-yao {{item.isBian ? 'primary-highlight' : ''}} {{item.type}}" tt:for="{{changedGuaDetail}}" tt:key="index">
+            {{item.symbol}}
+          </view>
+        </view>
+        <view class="gua-content" tt:if="{{changedGuaInfo}}">
+          <view class="gua-ci {{interpretationMethod.highlightInfo[7] ? 'primary-highlight' : ''}}">
+            <text tt:if="{{interpretationMethod.highlightInfo[7]}}">★</text>卦辞：{{changedGuaInfo.guaCi}}
+          </view>
+          <view class="yao-ci-list">
+            <view class="yao-ci-item {{interpretationMethod.highlightInfo[index + 8] ? 'primary-highlight' : ''}}" 
+                  tt:for="{{changedGuaInfo.yaoCi}}" tt:key="index">
+              <text tt:if="{{interpretationMethod.highlightInfo[index + 8]}}">★</text>{{item}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> 

@@ -1,0 +1,29 @@
+<view class="container">
+  <view class="title">汉字起卦法</view>
+  <view class="form">
+    <view class="form-row">
+      <text>第一个汉字：</text>
+      <input type="text" value="{{charA}}" data-field="charA" bindinput="onInputChange" maxlength="1" />
+      <text>笔画数：</text>
+      <input type="number" value="{{strokesA}}" data-field="strokesA" bindinput="onStrokesInput" min="1" />
+    </view>
+    <view class="form-row">
+      <text>第二个汉字：</text>
+      <input type="text" value="{{charB}}" data-field="charB" bindinput="onInputChange" maxlength="1" />
+      <text>笔画数：</text>
+      <input type="number" value="{{strokesB}}" data-field="strokesB" bindinput="onStrokesInput" min="1" />
+    </view>
+    <view class="form-row">
+      <text>时辰数T（毫秒%9）：</text>
+      <text>{{timeT}}</text>
+      <button size="mini" bindtap="onRefreshTimeT">刷新T</button>
+    </view>
+  </view>
+  <view class="result">
+    <text>上卦数：{{result.upper}}</text>
+    <text>下卦数：{{result.lower}}</text>
+    <text>动爻数：{{result.moving}}</text>
+    <text>卦象：{{result.guaName}}</text>
+  </view>
+  <button bindtap="onBack">返回</button>
+</view> 

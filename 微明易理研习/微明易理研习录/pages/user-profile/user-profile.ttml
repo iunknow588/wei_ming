@@ -1,0 +1,65 @@
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <!-- 未登录状态 -->
+    <view class="not-logged-in" tt:if="{{!user}}">
+      <view class="avatar-placeholder">
+        <text class="avatar-icon">👤</text>
+      </view>
+      <view class="welcome-text">
+        <text class="welcome-title">欢迎使用微明易理</text>
+        <text class="welcome-desc">登录后可享受更多功能</text>
+      </view>
+      <button 
+        class="login-button" 
+        bindtap="onLoginTap" 
+        disabled="{{isAuthorizing}}"
+      >
+        {{isAuthorizing ? '授权中...' : '立即登录'}}
+      </button>
+    </view>
+
+    <!-- 已登录状态 -->
+    <view class="logged-in" tt:if="{{user}}">
+      <view class="user-info">
+        <image src="{{user.avatarUrl}}" class="avatar" />
+        <view class="user-details">
+          <text class="nickname">{{user.nickName}}</text>
+          <text class="status">已登录</text>
+        </view>
+      </view>
+      <button class="logout-button" bindtap="onLogoutTap">
+        退出登录
+      </button>
+    </view>
+  </view>
+
+  <!-- 功能说明 -->
+  <view class="features">
+    <view class="feature-title">登录后可享受的功能</view>
+    <view class="feature-list">
+      <view class="feature-item">
+        <text class="feature-icon">📖</text>
+        <text class="feature-text">查看卦象详细解释</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">📝</text>
+        <text class="feature-text">记录学习进度</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">⭐</text>
+        <text class="feature-text">收藏喜欢的卦象</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-icon">📊</text>
+        <text class="feature-text">查看学习统计</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 应用信息 -->
+  <view class="app-info">
+    <text class="app-name">微明易理研习录</text>
+    <text class="app-version">版本 1.0.0</text>
+  </view>
+</view> 

@@ -1,0 +1,306 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #d3d3d3 100%);
+  padding: 0;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+/* 64卦列表 */
+.gua-list {
+  flex: 1;
+  background: rgba(245, 245, 245, 0.95);
+  margin: 15px;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(105, 105, 105, 0.15);
+  width: calc(100% - 30px);
+  max-width: calc(100vw - 30px);
+  box-sizing: border-box;
+  overflow-x: hidden;
+  border: 1px solid rgba(105, 105, 105, 0.1);
+}
+
+.list-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #696969;
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(105, 105, 105, 0.2);
+  width: 100%;
+  box-sizing: border-box;
+  font-family: "SimSun", "宋体", serif;
+}
+
+.gua-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.gua-item {
+  display: flex;
+  align-items: center;
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* 已完成状态 - 淡蓝色到天蓝色渐变 */
+.gua-completed {
+  background: linear-gradient(135deg, #87ceeb 0%, #4682b4 50%, #1e90ff 100%);
+}
+
+/* 已完成状态的文字颜色 - 深色文字，与背景形成强烈反差 */
+.gua-completed .gua-symbol {
+  color: #1a1a1a;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+}
+
+.gua-completed .gua-desc {
+  color: #2d2d2d;
+  font-weight: 500;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+}
+
+.gua-completed .gua-name-overlay {
+  color: #1a1a1a;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+}
+
+/* 未完成状态 - 质朴木质色调 */
+.gua-incomplete {
+  background: linear-gradient(135deg, #a9a9a9 0%, #808080 50%, #696969 100%);
+}
+
+/* 未完成状态的文字颜色 - 保持原有的白色文字 */
+.gua-incomplete .gua-symbol {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.gua-incomplete .gua-desc {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.3;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.gua-incomplete .gua-name-overlay {
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.gua-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gua-item:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gua-item:active::before {
+  opacity: 1;
+}
+
+/* 左侧圆形缩略图 */
+.gua-thumbnail {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.gua-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(105, 105, 105, 0.3);
+  box-shadow: 0 2px 8px rgba(105, 105, 105, 0.2);
+  background: linear-gradient(135deg, #f8f8f8 0%, #e6e6e6 100%);
+  opacity: 0.9;
+  filter: brightness(1.05) contrast(0.95) grayscale(0.1);
+}
+
+.gua-name-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: bold;
+  font-family: "LiSu", "隶书", "SimLi", serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 6px;
+  box-sizing: border-box;
+  backdrop-filter: blur(1px);
+  width: 100%;
+  height: 100%;
+  color: #696969;
+}
+
+/* 单个字符样式 */
+.single-char {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 40px;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* 两个字符样式 */
+.double-char {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 0px;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.char-left, .char-right {
+  font-size: 30px;
+  flex: 1;
+  text-align: center;
+}
+
+/* 右侧信息 */
+.gua-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0; /* 防止文字溢出 */
+  max-width: calc(100% - 72px); /* 减去左侧缩略图的宽度和间距 */
+  box-sizing: border-box;
+}
+
+.gua-symbol {
+  font-size: 18px;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: "SimSun", "宋体", serif;
+}
+
+.gua-desc {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.3;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: "SimSun", "宋体", serif;
+}
+
+/* 响应式设计 */
+@media (min-width: 768px) {
+  .gua-thumbnail {
+    width: 70px;
+    height: 70px;
+    margin-right: 15px;
+  }
+  
+  .gua-name-overlay {
+    font-size: 22px;
+    padding: 8px;
+    font-family: "SimHei", "LiSu", "黑体", "隶书", sans-serif;
+  }
+  
+  /* 已完成状态在响应式下的文字颜色 */
+  .gua-completed .gua-name-overlay {
+    color: #1a1a1a;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+  }
+  
+  /* 未完成状态在响应式下的文字颜色 */
+  .gua-incomplete .gua-name-overlay {
+    color: #696969;
+  }
+  
+  /* 单个字符样式 */
+  .single-char {
+    font-size: 40px;
+  }
+  
+  /* 两个字符样式 */
+  .double-char {
+    gap: 0px;
+  }
+  
+  .char-left, .char-right {
+    font-size: 36px;
+  }
+  
+  .gua-symbol {
+    font-size: 19px;
+  }
+  
+  .gua-desc {
+    font-size: 12px;
+  }
+}
+
+.logo-container {
+  width: 48px;
+  height: 48px;
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 100%;
+  height: 100%;
+} 

@@ -1,0 +1,42 @@
+<view class="container">
+  <view class="title">时间起卦法</view>
+  <view class="form">
+    <view class="form-row">
+      <text>农历年地支序数：</text>
+      <input type="number" value="{{lunarYearBranch}}" data-field="lunarYearBranch" bindinput="onInputChange" min="1" max="12" />
+      <text>（如2025蛇年，巳=6）</text>
+    </view>
+    <view class="form-row">
+      <text>农历月：</text>
+      <input type="number" value="{{lunarMonth}}" data-field="lunarMonth" bindinput="onInputChange" min="1" max="12" />
+    </view>
+    <view class="form-row">
+      <text>农历日：</text>
+      <input type="number" value="{{lunarDay}}" data-field="lunarDay" bindinput="onInputChange" min="1" max="31" />
+    </view>
+    <view class="form-row">
+      <text>时辰地支序数：</text>
+      <input type="number" value="{{hourBranch}}" data-field="hourBranch" bindinput="onInputChange" min="1" max="12" />
+      <text>（如午时=7）</text>
+    </view>
+    <view class="form-row">
+      <text>分钟：</text>
+      <input type="number" value="{{minute}}" data-field="minute" bindinput="onInputChange" min="0" max="59" />
+    </view>
+  </view>
+  <view class="dizhi-table">
+    <text>地支对照表：</text>
+    <view class="dizhi-row">
+      <block wx:for="{{dizhiMap}}" wx:key="value">
+        <text>{{item.label}}={{item.value}} </text>
+      </block>
+    </view>
+  </view>
+  <view class="result">
+    <text>下卦数：{{result.lower}}</text>
+    <text>上卦数：{{result.upper}}</text>
+    <text>动爻数：{{result.moving}}</text>
+    <text>卦象：{{result.guaName}}</text>
+  </view>
+  <button bindtap="onBack">返回</button>
+</view> 

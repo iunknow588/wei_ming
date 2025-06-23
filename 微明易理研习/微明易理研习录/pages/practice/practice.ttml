@@ -1,0 +1,112 @@
+<view class="container">
+  <!-- 易理研习 - 三栏布局 -->
+  <view class="practice-layout">
+    
+    <!-- 第一栏：起卦原则 -->
+    <view class="column principles-column">
+      <view class="column-title">起卦原则</view>
+      <view class="principles-list">
+        <view class="principle-item">
+          <view class="principle-number">1</view>
+          <view class="principle-content">
+            <view class="principle-title">小事不起卦，无事不起卦</view>
+            <view class="principle-desc">没什么事，或者说没什么要紧的事，就不要算起卦。</view>
+          </view>
+        </view>
+        
+        <view class="principle-item">
+          <view class="principle-number">2</view>
+          <view class="principle-content">
+            <view class="principle-title">心动即起卦</view>
+            <view class="principle-desc">想到或遇到某件事决策不下，想要起卦时，就立即起卦，不要等到事后再去起卦，以错时机。</view>
+          </view>
+        </view>
+        
+        <view class="principle-item">
+          <view class="principle-number">3</view>
+          <view class="principle-content">
+            <view class="principle-title">一事不二卦</view>
+            <view class="principle-desc">同一件事，在没有变化之前就不要去重复算，你不信卦，卦也不会给你正确的。</view>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 第二栏：起卦方法 -->
+    <view class="column methods-column">
+      <view class="column-title">起卦方法</view>
+      <view class="methods-list">
+        <view class="method-item" bindtap="onMethodTap" data-method="copper">
+          <view class="method-icon">🪙</view>
+          <view class="method-title">铜钱摇卦法</view>
+          <view class="method-desc">最流行的起卦方法，简单易行</view>
+        </view>
+        
+        <view class="method-item" bindtap="onMethodTap" data-method="yarrow">
+          <view class="method-icon">🌿</view>
+          <view class="method-title">蓍草起卦法</view>
+          <view class="method-desc">最古老的起卦方法，仪式感强</view>
+        </view>
+        
+        <view class="method-item" bindtap="onMethodTap" data-method="plum">
+          <view class="method-icon">🌸</view>
+          <view class="method-title">梅花心易法</view>
+          <view class="method-desc">邵雍创立，灵活多变</view>
+        </view>
+        
+        <view class="method-item" bindtap="onMethodTap" data-method="time">
+          <view class="method-icon">⏰</view>
+          <view class="method-title">时间起卦法</view>
+          <view class="method-desc">利用时间信息起卦</view>
+        </view>
+        
+        <view class="method-item" bindtap="onMethodTap" data-method="number">
+          <view class="method-icon">🔢</view>
+          <view class="method-title">数字起卦法</view>
+          <view class="method-desc">通过数字联想起卦</view>
+        </view>
+        
+        <view class="method-item" bindtap="onMethodTap" data-method="character">
+          <view class="method-icon">📝</view>
+          <view class="method-title">汉字起卦法</view>
+          <view class="method-desc">利用汉字笔画起卦</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 第三栏：起卦实践 -->
+    <view class="column practice-column">
+      <view class="column-title">起卦实践</view>
+      <view class="practice-buttons">
+        <view class="practice-btn coin-btn" bindtap="onCoinDivination">
+          <view class="btn-icon">🪙</view>
+          <view class="btn-text">摇钱起卦</view>
+        </view>
+        <view class="practice-btn time-btn" bindtap="onTimeDivination">
+          <view class="btn-icon">⏰</view>
+          <view class="btn-text">时间起卦</view>
+        </view>
+        <view class="practice-btn number-btn" bindtap="onNumberDivination">
+          <view class="btn-icon">🔢</view>
+          <view class="btn-text">数字起卦</view>
+        </view>
+        <view class="practice-btn character-btn" bindtap="onCharacterDivination">
+          <view class="btn-icon">📝</view>
+          <view class="btn-text">汉字起卦</view>
+        </view>
+      </view>
+    </view>
+    
+  </view>
+  <!-- 历史摇卦数据列表 -->
+  <view class="history-section">
+    <view class="history-title">历史摇卦记录</view>
+    <view class="history-list">
+      <view class="history-item" tt:for="{{historyRecords}}" tt:key="key" bindtap="onHistoryItemTap" data-key="{{item.key}}">
+        <view class="history-time">{{item.key}}</view>
+        <view class="history-gua">本卦：{{item.originalGuaName}} <text class="history-bian">变爻: {{item.bianCount}}</text></view>
+      </view>
+      <view class="history-empty" tt:if="{{historyRecords.length === 0}}">暂无历史记录</view>
+    </view>
+  </view>
+</view> 

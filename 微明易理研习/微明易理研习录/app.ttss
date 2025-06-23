@@ -1,0 +1,35 @@
+page {
+  flex: 1;
+  display: flex;
+  background: #E7E7E7;
+  width: 100%;
+  overflow-x: hidden; /* 防止水平滚动 */
+  box-sizing: border-box;
+}
+
+/* 确保所有容器都不会超出屏幕宽度 */
+.container {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  color: #FFF;
+  border: none;
+  width: 300rpx;
+  font-size: 52rpx;
+  color: #000000;
+  height: 120rpx;
+  color: #FFF;
+  background-color: #FE2C55;
+}
+
+.add-button::after {
+  border: none;
+}

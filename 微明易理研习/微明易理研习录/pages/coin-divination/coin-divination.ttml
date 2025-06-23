@@ -1,0 +1,89 @@
+<view class="container">
+  <!-- 摇钱起卦页面 -->
+  <view class="divination-header">
+    <view class="header-title">摇钱起卦</view>
+  </view>
+
+  <!-- 起卦指导，放在标题下方 -->
+  <view class="guidance">
+    <view class="guidance-title">起卦指导</view>
+    <view class="guidance-content">
+      <view class="guidance-item">1. 集中精神，默想所求测之事</view>
+      <view class="guidance-item">2. 点击"摇卦"按钮开始摇卦</view>
+      <view class="guidance-item">3. 等待铜钱停止旋转</view>
+      <view class="guidance-item">4. 重复六次完成整个卦象</view>
+    </view>
+  </view>
+
+  <!-- 起卦提示 -->
+  <view class="divination-subtitle">
+    <view class="header-subtitle">请集中意念，默想所求测之事</view>
+  </view>
+
+  <!-- 铜钱区域 -->
+  <view class="coins-container">
+    <view class="coin-wrapper" tt:for="{{coins}}" tt:key="index">
+      <view class="coin {{item.isSpinning ? 'spinning' : ''}}" bindtap="onCoinTap" data-index="{{index}}">
+        <image 
+          class="coin-face {{item.showFront ? 'front' : 'back'}}" 
+          src="{{item.showFront ? wuZhu1 : wuZhu2}}" 
+          mode="aspectFit"
+        />
+      </view>
+      <view class="coin-label">铜钱{{index + 1}}</view>
+    </view>
+  </view>
+
+  <!-- 操作按钮（仅摇卦/重新摇卦） -->
+  <view class="action-buttons">
+    <view class="action-btn divination-btn {{isDivinationDisabled ? 'disabled' : ''}}" bindtap="onDivination">
+      <view class="btn-icon">🪙</view>
+      <view class="btn-text">{{currentRound >= totalRounds ? '重新摇卦' : '摇卦'}}</view>
+    </view>
+  </view>
+
+  <!-- 爻结果显示区域 -->
+  <view class="yao-display-area">
+    <view class="yao-display-title">爻象结果（从底向上）</view>
+    <view class="yao-display-content">
+      <!-- 从底向上显示爻象，按照传统易学习惯 -->
+      <view class="yao-item {{item.isEmpty ? 'empty' : ''}}" tt:for="{{yaoResults}}" tt:key="index">
+        <view class="yao-number">{{item.number}}</view>
+        <view class="yao-symbol {{item.result.type}}" tt:if="{{!item.isEmpty}}">{{item.result.symbol}}</view>
+        <view class="yao-symbol empty" tt:if="{{item.isEmpty}}">—</view>
+        <view class="yao-desc" tt:if="{{!item.isEmpty}}">{{item.result.desc}}</view>
+        <view class="yao-desc empty" tt:if="{{item.isEmpty}}">待摇卦</view>
+        <!-- 显示铜钱状态 -->
+        <view class="coin-status" tt:if="{{!item.isEmpty && item.result.coinStatusText}}">
+          <text class="coin-status-text">[{{item.result.coinStatusText}}]</text>
+        </view>
+      </view>
+      <!-- 显示当前进度 -->
+      <view class="yao-progress" tt:if="{{currentRound < totalRounds}}">
+        <view class="progress-text">进度: {{currentRound}}/{{totalRounds}}</view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{(currentRound / totalRounds) * 100}}%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 页面底部操作按钮区 -->
+  <view class="footer-action-buttons">
+    <view class="action-btn" bindtap="onViewGua">
+      <view class="btn-icon">📖</view>
+      <view class="btn-text">解读方法</view>
+    </view>
+    <view class="action-btn" bindtap="onNewDivination">
+      <view class="btn-icon">🔄</view>
+      <view class="btn-text">重新起卦</view>
+    </view>
+    <view class="action-btn result-btn" bindtap="onResultAnalysis" tt:if="{{currentRound >= totalRounds}}">
+      <view class="btn-icon">📊</view>
+      <view class="btn-text">结果解析</view>
+    </view>
+  </view>
+
+  <!-- 结果区域 -->
+  <!-- 已迁移到 result-analysis 页面，原地删除 -->
+</view> 

@@ -1,0 +1,84 @@
+<view class="gua-detail-page">
+  <!-- 背景图片 -->
+  <image 
+    class="background-image" 
+    src="{{gua.image}}" 
+    mode="aspectFill"
+    lazy-load="{{false}}"
+    show-menu-by-longpress="{{false}}"
+    bindload="onImageLoad"
+    binderror="onImageError"
+  />
+  
+  <view class="gua-detail-header">
+    <view class="gua-title-container">
+      <text class="gua-detail-title">{{gua.guaName}}</text>
+      <!-- 卦象绘制区域 -->
+      <view class="gua-symbol-container">
+        <!-- Canvas卦象绘制（已移除） -->
+        <!-- <canvas class="gua-symbol-canvas" canvas-id="guaSymbol" type="2d" bindtouchstart="onCanvasTouch"></canvas> -->
+        <!-- 备用SVG显示（已移除） -->
+        <!-- <view class="gua-symbol-svg" tt:if="{{guaSymbolSVG}}" bindtap="onCanvasTouch" style="display: none;">
+          <rich-text nodes="{{guaSymbolSVG}}"></rich-text>
+        </view> -->
+        <!-- 新的卦象显示（主要显示方式） -->
+        <view class="gua-symbol-new" bindtap="onCanvasTouch" tt:if="{{guaComponents}}">
+          <!-- 上三爻 -->
+          <view class="upper-trigram">
+            <view class="trigram-lines">
+              <view class="trigram-line" tt:for="{{guaComponents.upperLines}}" tt:for-item="line" tt:for-index="lineIndex">
+                <view class="line-segment {{line === 1 ? 'yang' : 'yin-left'}}"></view>
+                <view class="line-segment {{line === 1 ? 'yang' : 'yin-right'}}" tt:if="{{line === 0}}"></view>
+              </view>
+            </view>
+            <text class="bagua-name">{{guaComponents.upper}}</text>
+          </view>
+          
+          <!-- 中间空隙 -->
+          <view class="middle-gap"></view>
+          
+          <!-- 下三爻 -->
+          <view class="lower-trigram">
+            <view class="trigram-lines">
+              <view class="trigram-line" tt:for="{{guaComponents.lowerLines}}" tt:for-item="line" tt:for-index="lineIndex">
+                <view class="line-segment {{line === 1 ? 'yang' : 'yin-left'}}"></view>
+                <view class="line-segment {{line === 1 ? 'yang' : 'yin-right'}}" tt:if="{{line === 0}}"></view>
+              </view>
+            </view>
+            <text class="bagua-name">{{guaComponents.lower}}</text>
+          </view>
+        </view>
+        
+        <!-- 纯CSS卦象显示（备用，已移除） -->
+        <!-- <view class="gua-symbol-css" bindtap="onCanvasTouch" tt:if="{{guaLines.length > 0 && !guaComponents}}">
+          <view class="gua-lines">
+            <view class="gua-line" tt:for="{{guaLines}}" tt:for-item="line" tt:for-index="lineIndex">
+              <view class="line-segment {{line === 1 ? 'yang' : 'yin-left'}}"></view>
+              <view class="line-segment {{line === 1 ? 'yang' : 'yin-right'}}" tt:if="{{line === 0}}"></view>
+            </view>
+          </view>
+        </view> -->
+      </view>
+    </view>
+  </view>
+  <view class="gua-detail-content">
+    <view class="gua-detail-section">
+      <text class="section-label">卦辞：</text>
+      <text class="section-content">{{gua.guaCi}}</text>
+    </view>
+    <view class="gua-detail-section">
+      <text class="section-label">爻辞：</text>
+      <view class="yao-list">
+        <text class="yao-item" tt:for="{{gua.yaoCi}}" tt:for-item="yao">{{yao}}</text>
+      </view>
+    </view>
+    <view class="gua-detail-section">
+      <text class="section-label">注意事项：</text>
+      <text class="section-content">{{gua.explanation}}</text>
+    </view>
+    <view class="gua-detail-section">
+      <text class="section-label">历史典故：</text>
+      <text class="section-content">（待补充）</text>
+    </view>
+  </view>
+</view> 

@@ -1,0 +1,47 @@
+<view class="container">
+  <!-- 页面头部 -->
+  <view class="header">
+    <view class="back-btn" bindtap="onBack">
+      <text class="back-icon">←</text>
+    </view>
+    <view class="header-title">解读方法</view>
+  </view>
+
+  <!-- 内容区域 -->
+  <view class="content">
+    <view class="interpretation-content">
+      <view class="content-item" tt:for="{{interpretationContent}}" tt:key="index">
+        <!-- 标题 -->
+        <view class="title" tt:if="{{item.type === 'title'}}">
+          {{item.text}}
+        </view>
+        
+        <!-- 分隔线 -->
+        <view class="divider" tt:if="{{item.type === 'divider'}}">
+          {{item.text}}
+        </view>
+        
+        <!-- 段落 -->
+        <view class="paragraph" tt:if="{{item.type === 'paragraph'}}">
+          {{item.text}}
+        </view>
+        
+        <!-- 方法项 -->
+        <view class="method-item" tt:if="{{item.type === 'method'}}">
+          <view class="method-header">
+            <view class="method-number">{{item.number}}.</view>
+            <view class="method-title">{{item.title}}</view>
+          </view>
+          <view class="method-content" tt:if="{{item.content}}">
+            {{item.content}}
+          </view>
+          <view class="method-sub-items" tt:if="{{item.subItems}}">
+            <view class="sub-item" tt:for="{{item.subItems}}" tt:key="subIndex">
+              {{item}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view> 
