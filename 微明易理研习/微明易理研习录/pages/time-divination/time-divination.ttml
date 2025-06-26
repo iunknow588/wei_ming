@@ -1,42 +1,90 @@
-<view class="container">
-  <view class="title">时间起卦法</view>
-  <view class="form">
-    <view class="form-row">
-      <text>农历年地支序数：</text>
-      <input type="number" value="{{lunarYearBranch}}" data-field="lunarYearBranch" bindinput="onInputChange" min="1" max="12" />
-      <text>（如2025蛇年，巳=6）</text>
-    </view>
-    <view class="form-row">
-      <text>农历月：</text>
-      <input type="number" value="{{lunarMonth}}" data-field="lunarMonth" bindinput="onInputChange" min="1" max="12" />
-    </view>
-    <view class="form-row">
-      <text>农历日：</text>
-      <input type="number" value="{{lunarDay}}" data-field="lunarDay" bindinput="onInputChange" min="1" max="31" />
-    </view>
-    <view class="form-row">
-      <text>时辰地支序数：</text>
-      <input type="number" value="{{hourBranch}}" data-field="hourBranch" bindinput="onInputChange" min="1" max="12" />
-      <text>（如午时=7）</text>
-    </view>
-    <view class="form-row">
-      <text>分钟：</text>
-      <input type="number" value="{{minute}}" data-field="minute" bindinput="onInputChange" min="0" max="59" />
+<view class="container" bindtouchstart="onContainerTouchStart" bindtouchmove="onContainerTouchMove" bindtouchend="onContainerTouchEnd">
+  <!-- 摇钱起卦页面 -->
+  <view class="divination-header">
+    <view class="header-title">时间起卦</view>
+  </view>
+
+ <!-- 免责声明提示条 -->
+  <view class="disclaimer-banner" tt:if="{{showDisclaimer}}">
+    <view class="disclaimer-content">
+      <text class="disclaimer-text">{{disclaimerText}}</text>
+      <view class="disclaimer-close" bindtap="onCloseDisclaimer">✕</view>
     </view>
   </view>
-  <view class="dizhi-table">
-    <text>地支对照表：</text>
-    <view class="dizhi-row">
-      <block wx:for="{{dizhiMap}}" wx:key="value">
-        <text>{{item.label}}={{item.value}} </text>
-      </block>
+
+  <!-- 起卦指导，放在标题下方 -->
+  <view class="guidance">
+    <view class="guidance-title">起卦指导</view>
+    <view class="guidance-content">
+      <view class="guidance-item">1. 集中精神，默想所求测之事</view>
+      <view class="guidance-item">2. 点击"生成卦象"按钮，系统将自动以当前时间为依据生成卦象</view>
+      <view class="guidance-item">3. 查看自动生成的卦象结果</view>
+      <view class="guidance-item">4. 点击"结果解析"查看详细解释</view>
     </view>
   </view>
-  <view class="result">
-    <text>下卦数：{{result.lower}}</text>
-    <text>上卦数：{{result.upper}}</text>
-    <text>动爻数：{{result.moving}}</text>
-    <text>卦象：{{result.guaName}}</text>
+
+  <!-- 起卦提示 -->
+  <view class="divination-subtitle">
+    <view class="header-subtitle">请集中意念，默想所求测之事</view>
   </view>
-  <button bindtap="onBack">返回</button>
+
+  <!-- 时间展示区域 -->
+  <view class="system-time-box" bindlongpress="onTimeBoxLongPress" bindtouchstart="onTimeBoxTouchStart">
+    <text class="system-time-label">当前时间：</text>
+    <view class="time-display-content">
+      <text class="system-time-value">{{systemTime}}</text>
+      <text class="lunar-time-value">{{lunarTime}}</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮（生成卦象和保存并排显示） -->
+  <view class="action-buttons">
+    <view class="action-btn divination-btn {{isDivinationDisabled ? 'disabled' : ''}}" bindtap="onDivination">
+      <view class="btn-icon">💸</view>
+      <view class="btn-text"><view>生成</view><view>卦象</view></view>
+    </view>
+    <!-- 保存卦象按钮，一直存在但根据状态灰化 -->
+    <view class="action-btn save-btn {{isDivinationDisabled ? 'disabled' : ''}} {{isCurrentGuaSaved ? 'saved' : ''}}" bindtap="onSaveCoinDivinationToUserData">
+      <view class="btn-icon">{{isCurrentGuaSaved ? '✅' : '💸'}}</view>
+      <view class="btn-text"><view>保存</view><view>卦象</view></view>
+    </view>
+  </view>
+
+  <!-- 爻结果显示区域 -->
+  <view class="yao-display-area">
+    <view class="yao-display-title">爻象结果（从底向上）</view>
+    <view class="yao-display-content">
+      <!-- 从底向上显示爻象，按照传统易学习惯 -->
+      <view class="yao-item {{item.isEmpty ? 'empty' : ''}}" tt:for="{{yaoResults}}" tt:key="index">
+        <view class="yao-number">{{item.number}}</view>
+        <view class="yao-symbol {{item.result.type}}" tt:if="{{!item.isEmpty}}">{{item.result.symbol}}</view>
+        <view class="yao-symbol empty" tt:if="{{item.isEmpty}}">—</view>
+        <view class="yao-desc" tt:if="{{!item.isEmpty}}">{{item.result.desc}}</view>
+        <view class="yao-desc empty" tt:if="{{item.isEmpty}}">待输入</view>
+        <!-- 显示铜钱状态 -->
+        <view class="coin-status" tt:if="{{!item.isEmpty && item.result.coinStatusText}}">
+          <text class="coin-status-text">[{{item.result.coinStatusText}}]</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 页面底部操作按钮区 -->
+  <view class="footer-action-buttons">
+    <view class="action-btn" bindtap="onViewBianGua">
+      <view class="btn-icon">📖</view>
+      <view class="btn-text"><text>变卦</text><text>原理</text></view>
+    </view>
+    <view class="action-btn" bindtap="onNewDivination">
+      <view class="btn-icon">🔄</view>
+      <view class="btn-text"><text>重新</text><text>起卦</text></view>
+    </view>
+    <view class="action-btn result-btn {{isDivinationDisabled ? 'disabled' : ''}}" bindtap="onResultAnalysis">
+      <view class="btn-icon">📊</view>
+      <view class="btn-text"><text>结果</text><text>解析</text></view>
+    </view>
+  </view>
+
+  <!-- 结果区域 -->
+  <!-- 已迁移到 result-analysis 页面，原地删除 -->
 </view> 

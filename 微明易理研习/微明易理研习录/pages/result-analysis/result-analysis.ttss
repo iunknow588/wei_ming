@@ -2,9 +2,10 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e3f2fd 0%, #a8e6cf 50%, #d1c4e9 100%);
   padding: 20px;
   box-sizing: border-box;
+  padding-bottom: 50px !important;
 }
 
 .yao-display-area {
@@ -171,4 +172,80 @@
   padding: 2px 6px;
   border-radius: 10px;
   font-weight: bold;
+}
+
+.gua-explanation {
+  margin: 12px 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border-radius: 10px;
+  border-left: 5px solid #f39c12;
+  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.2);
+}
+
+.explanation-label {
+  font-size: 15px;
+  font-weight: bold;
+  color: #d68910;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.explanation-content {
+  font-size: 14px;
+  color: #2c3e50;
+  line-height: 1.6;
+  text-align: justify;
+  font-weight: 500;
+}
+
+/* 免责声明提示条样式 */
+.disclaimer-banner {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  padding: 8px 12px;
+  margin: 0 10px 10px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  position: relative;
+}
+
+.disclaimer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.disclaimer-text {
+  color: #FFFFFF;
+  font-size: 11px;
+  line-height: 1.4;
+  flex: 1;
+  font-family: "SimHei", "黑体", sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.disclaimer-close {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.disclaimer-close:active {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* 移除原来的固定底部免责声明样式 */
+.disclaimer {
+  display: none;
 } 

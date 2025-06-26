@@ -1,0 +1,1 @@
+module.exports = require('./lib/solarlunar.min.js');

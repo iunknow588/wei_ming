@@ -1,0 +1,1 @@
+{"version":3,"file":"node_modules\\solarlunar\\const\\nStr2.js","names":[],"sources":["node_modules\\solarlunar\\const\\nStr2.js"],"sourcesContent":["/**\n * 日期转农历称呼速查表\n * @Array Of Property\n * @trans ['初','十','廿','卅']\n * @return Cn string\n */\nexport default ['\\u521d', '\\u5341', '\\u5eff', '\\u5345'];\n"],"mappings":"cAMe,CAAC,IAAU,IAAU,IAAU","ignoreList":[]}

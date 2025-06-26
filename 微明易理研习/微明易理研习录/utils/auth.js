@@ -25,7 +25,6 @@ class AuthManager {
       }
       return user;
     } catch (err) {
-      console.error('初始化授权管理器失败', err);
       return null;
     }
   }
@@ -171,7 +170,7 @@ class AuthManager {
       // 直接调用getUserProfile，让抖音小程序自己处理授权状态
       return await this.getUserProfile(desc);
     } catch (err) {
-      // 新增：特殊处理“must be invoked by user tap gesture”错误
+      // 新增：特殊处理"must be invoked by user tap gesture"错误
       if (err && err.errMsg && err.errMsg.includes('must be invoked by user tap gesture')) {
         tt.showToast({ title: '请通过点击按钮进行授权', icon: 'none' });
       }
@@ -287,10 +286,17 @@ class AuthManager {
    */
   async getStoredUser() {
     return new Promise((resolve) => {
+      console.log('auth.js: 尝试从本地存储获取用户信息，key:', this.storageKey);
       tt.getStorage({
         key: this.storageKey,
-        success: (res) => resolve(res.data),
-        fail: () => resolve(null)
+        success: (res) => {
+          console.log('auth.js: 本地存储获取成功:', res.data);
+          resolve(res.data);
+        },
+        fail: (err) => {
+          console.log('auth.js: 本地存储获取失败:', err);
+          resolve(null);
+        }
       });
     });
   }

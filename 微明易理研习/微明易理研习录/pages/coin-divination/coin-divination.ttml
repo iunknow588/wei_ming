@@ -4,6 +4,14 @@
     <view class="header-title">摇钱起卦</view>
   </view>
 
+  <!-- 免责声明提示条 -->
+  <view class="disclaimer-banner" tt:if="{{showDisclaimer}}">
+    <view class="disclaimer-content">
+      <text class="disclaimer-text">{{disclaimerText}}</text>
+      <view class="disclaimer-close" bindtap="onCloseDisclaimer">✕</view>
+    </view>
+  </view>
+
   <!-- 起卦指导，放在标题下方 -->
   <view class="guidance">
     <view class="guidance-title">起卦指导</view>
@@ -34,11 +42,18 @@
     </view>
   </view>
 
-  <!-- 操作按钮（仅摇卦/重新摇卦） -->
+  <!-- 操作按钮（摇卦和保存并排显示） -->
   <view class="action-buttons">
     <view class="action-btn divination-btn {{isDivinationDisabled ? 'disabled' : ''}}" bindtap="onDivination">
-      <view class="btn-icon">🪙</view>
+      <view class="btn-icon">
+        <image class="coin-icon" src="/assets/coin.png" mode="aspectFit"></image>
+      </view>
       <view class="btn-text">{{currentRound >= totalRounds ? '重新摇卦' : '摇卦'}}</view>
+    </view>
+    <!-- 保存卦象按钮，一直存在但根据状态灰化 -->
+    <view class="action-btn save-btn {{currentRound < totalRounds ? 'disabled' : ''}} {{isCurrentGuaSaved ? 'saved' : ''}}" bindtap="onSaveCoinDivinationToUserData">
+      <view class="btn-icon">{{isCurrentGuaSaved ? '✅' : '💾'}}</view>
+      <view class="btn-text"><text>保存</text><text>卦象</text></view>
     </view>
   </view>
 
@@ -70,17 +85,17 @@
 
   <!-- 页面底部操作按钮区 -->
   <view class="footer-action-buttons">
-    <view class="action-btn" bindtap="onViewGua">
+    <view class="action-btn" bindtap="onViewBianGua">
       <view class="btn-icon">📖</view>
-      <view class="btn-text">解读方法</view>
+      <view class="btn-text"><text>变卦</text><text>原理</text></view>
     </view>
     <view class="action-btn" bindtap="onNewDivination">
       <view class="btn-icon">🔄</view>
-      <view class="btn-text">重新起卦</view>
+      <view class="btn-text"><text>重新</text><text>起卦</text></view>
     </view>
-    <view class="action-btn result-btn" bindtap="onResultAnalysis" tt:if="{{currentRound >= totalRounds}}">
+    <view class="action-btn result-btn {{currentRound < totalRounds ? 'disabled' : ''}}" bindtap="onResultAnalysis">
       <view class="btn-icon">📊</view>
-      <view class="btn-text">结果解析</view>
+      <view class="btn-text"><text>结果</text><text>解析</text></view>
     </view>
   </view>
 

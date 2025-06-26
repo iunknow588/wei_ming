@@ -1,7 +1,14 @@
 // 获取全局 app 实例
 const app = getApp();
 
-const { sixtyFourGuaData } = require('../../data/sixtyFourGua.js');
+const { sixtyFourGuaData, getGuaData } = require('../../data/sixtyFourGua.js');
+const { getGuaLines, getGuaComponents } = require('../../data/gua-data.js');
+const { 
+  findGuaName, 
+  analyzeInterpretationMethod,
+  getGuaHistoryRecords,
+  generateCompleteGuaResult
+} = require('../../utils/gua-utils.js');
 
 Page({
   data: {
@@ -86,21 +93,30 @@ Page({
     console.log('易理研习页面显示');
     // 读取历史摇卦数据
     let records = [];
-    try {
-      const allRecords = tt.getStorageSync('coinDivinationRecords') || {};
-      records = Object.keys(allRecords).sort().reverse().map(key => {
-        const rec = allRecords[key];
+    
+    const { getGuaHistoryRecords, generateCompleteGuaResult } = require('../../utils/gua-utils.js');
+    
+    // 使用新的单独文件存储方式
+    getGuaHistoryRecords().then(historyRecords => {
+      records = historyRecords.map(rec => {
+        // 从爻值数组生成完整的卦象信息
+        const completeResult = generateCompleteGuaResult(rec.yaoValues);
+        
         return {
-          key,
-          originalGuaName: rec.originalGuaName,
-          bianCount: Array.isArray(rec.bian) ? rec.bian.filter(Boolean).length : 0,
-          record: rec
+          key: rec.time, // 使用时间作为key
+          originalGuaName: completeResult.originalGuaInfo.name || '',
+          bianCount: completeResult.bian.filter(Boolean).length,
+          divinationType: rec.divinationType || 'unknown',
+          record: rec,
+          completeResult: completeResult
         };
       });
-    } catch (e) {
-      records = [];
-    }
-    this.setData({ historyRecords: records });
+      
+      this.setData({ historyRecords: records });
+    }).catch(err => {
+      console.error('读取历史记录失败:', err);
+      this.setData({ historyRecords: [] });
+    });
   },
 
   // 点击起卦方法
@@ -228,105 +244,28 @@ Page({
     const key = e.currentTarget.dataset.key;
     const item = this.data.historyRecords.find(r => r.key === key);
     if (!item) return;
-    const rec = item.record;
-    // 1. 还原本卦、变卦
-    const originalGua = rec.originalGua;
-    const changedGua = originalGua.map((v, i) => rec.bian[i] ? 1 - v : v);
-    // 2. 查找卦名和索引
-    const originalGuaInfo = this.findGuaName(originalGua);
-    const changedGuaInfo = this.findGuaName(changedGua);
-    // 3. 获取卦辞和爻辞
-    const originalGuaContent = this.getGuaContent(originalGuaInfo.index);
-    const changedGuaContent = this.getGuaContent(changedGuaInfo.index);
-    // 4. 分析解读方法
-    const interpretationMethod = this.analyzeInterpretationMethod(rec.bian, originalGuaInfo, changedGuaInfo);
-    // 5. 跳转到结果解析页面
+    
+    // 使用简化的参数传递方式
+    const yaoValues = item.record.yaoValues;
     const params = {
-      originalGua: JSON.stringify(originalGua),
-      changedGua: JSON.stringify(changedGua),
-      bian: JSON.stringify(rec.bian),
-      originalGuaName: originalGuaInfo.name,
-      changedGuaName: changedGuaInfo.name,
-      originalGuaInfo: encodeURIComponent(JSON.stringify(originalGuaContent)),
-      changedGuaInfo: encodeURIComponent(JSON.stringify(changedGuaContent)),
-      interpretationMethod: encodeURIComponent(JSON.stringify(interpretationMethod))
+      yaoValues: encodeURIComponent(JSON.stringify(yaoValues))
     };
     const query = Object.keys(params).map(k => `${k}=${params[k]}`).join('&');
+    
     tt.navigateTo({
-      url: `/pages/result-analysis/result-analysis?${query}`
-    });
-  },
-
-  // 根据爻象数组查找卦名
-  findGuaName(yaoArray) {
-    const binaryString = yaoArray.map(yao => yao === 1 ? '1' : '0').join('');
-    const guaCodeMap = {
-      '111111': { name: '乾', index: 0 }, '000000': { name: '坤', index: 1 }, '100010': { name: '屯', index: 2 }, '010001': { name: '蒙', index: 3 }, '010111': { name: '需', index: 4 }, '111010': { name: '讼', index: 5 }, '010000': { name: '师', index: 6 }, '000010': { name: '比', index: 7 }, '110111': { name: '小畜', index: 8 }, '111011': { name: '履', index: 9 }, '111000': { name: '泰', index: 10 }, '000111': { name: '否', index: 11 }, '101111': { name: '同人', index: 12 }, '111101': { name: '大有', index: 13 }, '001000': { name: '谦', index: 14 }, '000100': { name: '豫', index: 15 }, '100110': { name: '随', index: 16 }, '011001': { name: '蛊', index: 17 }, '110000': { name: '临', index: 18 }, '000011': { name: '观', index: 19 }, '101001': { name: '噬嗑', index: 20 }, '100101': { name: '贲', index: 21 }, '100000': { name: '剥', index: 22 }, '000001': { name: '复', index: 23 }, '100111': { name: '无妄', index: 24 }, '111001': { name: '大畜', index: 25 }, '100001': { name: '颐', index: 26 }, '011110': { name: '大过', index: 27 }, '010010': { name: '坎', index: 28 }, '101101': { name: '离', index: 29 }, '001110': { name: '咸', index: 30 }, '011100': { name: '恒', index: 31 }, '111100': { name: '遁', index: 32 }, '001111': { name: '大壮', index: 33 }, '101000': { name: '晋', index: 34 }, '000101': { name: '明夷', index: 35 }, '110101': { name: '家人', index: 36 }, '101011': { name: '睽', index: 37 }, '001010': { name: '蹇', index: 38 }, '010100': { name: '解', index: 39 }, '100011': { name: '损', index: 40 }, '110001': { name: '益', index: 41 }, '011111': { name: '夬', index: 42 }, '111110': { name: '姤', index: 43 }, '011000': { name: '萃', index: 44 }, '000110': { name: '升', index: 45 }, '011010': { name: '困', index: 46 }, '010110': { name: '井', index: 47 }, '011101': { name: '革', index: 48 }, '101110': { name: '鼎', index: 49 }, '001001': { name: '震', index: 50 }, '100100': { name: '艮', index: 51 }, '110100': { name: '渐', index: 52 }, '001011': { name: '归妹', index: 53 }, '001101': { name: '丰', index: 54 }, '101100': { name: '旅', index: 55 }, '011011': { name: '巽', index: 56 }, '110110': { name: '兑', index: 57 }, '110010': { name: '涣', index: 58 }, '010011': { name: '节', index: 59 }, '110011': { name: '中孚', index: 60 }, '001100': { name: '小过', index: 61 }, '101010': { name: '既济', index: 62 }, '010101': { name: '未济', index: 63 }
-    };
-    const guaInfo = guaCodeMap[binaryString];
-    if (guaInfo) return guaInfo;
-    return { name: '未知卦', index: -1 };
-  },
-  // 获取卦辞和爻辞
-  getGuaContent(guaIndex) {
-    if (guaIndex >= 0 && guaIndex < sixtyFourGuaData.length) {
-      return sixtyFourGuaData[guaIndex];
-    }
-    return null;
-  },
-  // 历史数据解读方法分析
-  analyzeInterpretationMethod(bian, originalGuaInfo, changedGuaInfo) {
-    // 复制自coin-divination，简化版
-    const highlightInfo = new Array(14).fill(false);
-    const bianCount = bian.filter(Boolean).length;
-    let type = '', description = '';
-    if (bianCount === 0) {
-      type = '无变爻';
-      description = '直接看本卦卦辞';
-      highlightInfo[0] = true;
-    } else if (bianCount === 1) {
-      type = '1个变爻';
-      description = '以本卦变爻爻辞为主，参考之卦整体含义';
-      const bianIndex = bian.findIndex(Boolean);
-      highlightInfo[bianIndex + 1] = true;
-      highlightInfo[7] = true;
-    } else if (bianCount === 2) {
-      type = '2个变爻';
-      description = '以本卦两个变爻爻辞为主，以下爻为重点';
-      const bianIndices = [];
-      for (let i = 0; i < 6; i++) if (bian[i]) bianIndices.push(i);
-      highlightInfo[bianIndices[0] + 1] = true;
-      highlightInfo[bianIndices[1] + 1] = true;
-    } else if (bianCount === 3) {
-      type = '3个变爻';
-      description = '看本卦与之卦的卦辞';
-      highlightInfo[0] = true;
-      highlightInfo[7] = true;
-    } else if (bianCount === 4) {
-      type = '4个变爻';
-      description = '以之卦两个不变爻爻辞为主（以下爻为重）';
-      const unchangedIndices = [];
-      for (let i = 0; i < 6; i++) if (!bian[i]) unchangedIndices.push(i);
-      highlightInfo[unchangedIndices[0] + 8] = true;
-      highlightInfo[unchangedIndices[1] + 8] = true;
-    } else if (bianCount === 5) {
-      type = '5个变爻';
-      description = '以之卦唯一不变爻的爻辞为主';
-      for (let i = 0; i < 6; i++) if (!bian[i]) highlightInfo[i + 8] = true;
-    } else if (bianCount === 6) {
-      type = '6个变爻';
-      description = '乾卦变坤卦：用乾卦"用九"；坤卦变乾卦：用坤卦"用六"；其余卦看之卦卦辞';
-      if (originalGuaInfo.name === '乾' && changedGuaInfo.name === '坤') {
-        description = '乾卦变坤卦：用乾卦"用九"（见群龙无首）';
-        highlightInfo[6] = true;
-      } else if (originalGuaInfo.name === '坤' && changedGuaInfo.name === '乾') {
-        description = '坤卦变乾卦：用坤卦"用六"（利永贞）';
-        highlightInfo[6] = true;
-      } else {
-        highlightInfo[7] = true;
+      url: `/pages/result-analysis/result-analysis?${query}`,
+      success: () => {
+        console.log('跳转到结果解析页面成功');
+      },
+      fail: (err) => {
+        console.error('跳转到结果解析页面失败:', err);
+        tt.showToast({ 
+          title: '跳转失败，请重试', 
+          icon: 'none',
+          duration: 2000
+        });
       }
-    }
-    return { type, description, highlightInfo };
+    });
   },
 
   onTimeDivination() {

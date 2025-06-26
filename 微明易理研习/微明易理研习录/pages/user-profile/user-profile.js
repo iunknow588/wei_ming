@@ -9,15 +9,40 @@ Page({
     isAuthorizing: false,
   },
 
+  onLoad(options) {
+    this.syncUserInfo();
+  },
+
   onShow() {
     this.syncUserInfo();
   },
 
   syncUserInfo() {
-    const user = authManager.getCurrentUser();
+    // 优先从app的globalData获取用户信息，如果没有则从authManager获取
+    let user = app.globalData.user;
+    if (!user) {
+      user = authManager.getCurrentUser();
+    }
+    
     const isAuthorizing = authManager.isAuthorizing();
-    console.log('用户信息页面 - 用户:', user, '授权中:', isAuthorizing);
-    this.setData({ user, isAuthorizing });
+    
+    // 如果从authManager获取到了用户信息，同步到app的globalData
+    if (user && !app.globalData.user) {
+      app.globalData.user = user;
+    }
+    
+    // 强制设置用户信息，确保页面能正确显示
+    this.setData({ 
+      user: user, 
+      isAuthorizing: isAuthorizing 
+    });
+    
+    // 如果用户信息存在但页面仍然显示登录界面，强制刷新
+    if (user && this.data.user !== user) {
+      setTimeout(() => {
+        this.setData({ user: user, isAuthorizing: isAuthorizing });
+      }, 100);
+    }
   },
 
   // 用户点击登录按钮
@@ -29,6 +54,8 @@ Page({
 
     try {
       const user = await authManager.login('用于展示用户信息');
+      // 登录成功后，同步到app的globalData
+      app.globalData.user = user;
       this.syncUserInfo();
       tt.showToast({ title: '登录成功', icon: 'success' });
     } catch (err) {
@@ -44,6 +71,8 @@ Page({
       const confirmed = await authManager.confirmLogout();
       if (confirmed) {
         await authManager.logout();
+        // 退出登录后，清除app的globalData中的用户信息
+        app.globalData.user = null;
         this.syncUserInfo();
         tt.showToast({ title: '已退出登录', icon: 'success' });
       }

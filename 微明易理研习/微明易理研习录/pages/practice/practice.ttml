@@ -37,7 +37,9 @@
       <view class="column-title">起卦方法</view>
       <view class="methods-list">
         <view class="method-item" bindtap="onMethodTap" data-method="copper">
-          <view class="method-icon">🪙</view>
+          <view class="method-icon">
+            <image class="coin-icon" src="/assets/coin.png" mode="aspectFit"></image>
+          </view>
           <view class="method-title">铜钱摇卦法</view>
           <view class="method-desc">最流行的起卦方法，简单易行</view>
         </view>
@@ -78,21 +80,29 @@
     <view class="column practice-column">
       <view class="column-title">起卦实践</view>
       <view class="practice-buttons">
-        <view class="practice-btn coin-btn" bindtap="onCoinDivination">
-          <view class="btn-icon">🪙</view>
-          <view class="btn-text">摇钱起卦</view>
+        <!-- 第一行：摇钱起卦和汉字起卦 -->
+        <view class="practice-row">
+          <view class="practice-btn coin-btn" bindtap="onCoinDivination">
+            <view class="btn-icon">
+              <image class="coin-icon" src="/assets/coin.png" mode="aspectFit"></image>
+            </view>
+            <view class="btn-text">摇钱起卦</view>
+          </view>
+          <view class="practice-btn character-btn" bindtap="onCharacterDivination">
+            <view class="btn-icon">📝</view>
+            <view class="btn-text">汉字起卦</view>
+          </view>
         </view>
-        <view class="practice-btn time-btn" bindtap="onTimeDivination">
-          <view class="btn-icon">⏰</view>
-          <view class="btn-text">时间起卦</view>
-        </view>
-        <view class="practice-btn number-btn" bindtap="onNumberDivination">
-          <view class="btn-icon">🔢</view>
-          <view class="btn-text">数字起卦</view>
-        </view>
-        <view class="practice-btn character-btn" bindtap="onCharacterDivination">
-          <view class="btn-icon">📝</view>
-          <view class="btn-text">汉字起卦</view>
+        <!-- 第二行：时间起卦和数字起卦 -->
+        <view class="practice-row">
+          <view class="practice-btn time-btn" bindtap="onTimeDivination">
+            <view class="btn-icon">⏰</view>
+            <view class="btn-text">时间起卦</view>
+          </view>
+          <view class="practice-btn number-btn" bindtap="onNumberDivination">
+            <view class="btn-icon">🔢</view>
+            <view class="btn-text">数字起卦</view>
+          </view>
         </view>
       </view>
     </view>

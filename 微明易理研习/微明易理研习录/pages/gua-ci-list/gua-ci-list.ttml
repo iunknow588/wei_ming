@@ -1,6 +1,20 @@
 <view class="container">
+  <!-- 加载状态骨架屏 -->
+  <view class="skeleton-container" tt:if="{{isLoading}}">
+    <view class="skeleton-title"></view>
+    <view class="skeleton-list">
+      <view class="skeleton-item" tt:for="{{[1,2,3,4,5,6,7,8]}}" tt:key="index">
+        <view class="skeleton-thumbnail"></view>
+        <view class="skeleton-content">
+          <view class="skeleton-line"></view>
+          <view class="skeleton-line short"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 64卦列表 -->
-  <view class="gua-list">
+  <view class="gua-list" tt:if="{{!isLoading}}">
     <view class="list-title">六十四卦</view>
     <view class="gua-list-container">
       <view 
@@ -12,15 +26,23 @@
       >
         <!-- 左侧圆形缩略图 -->
         <view class="gua-thumbnail">
+          <!-- 图片加载占位符 -->
+          <view class="gua-image-placeholder" tt:if="{{!item.imageLoaded}}"></view>
+          <!-- 实际图片 -->
           <image 
+            tt:if="{{!item.imageError}}"
             id="gua-image-{{index}}"
             src="{{item.image}}" 
-            class="gua-image" 
+            class="gua-image {{item.imageLoaded ? 'image-loaded' : ''}}" 
             mode="aspectFill"
             bindload="onImageLoad"
             binderror="onImageError"
             data-index="{{index}}"
+            lazy-load="true"
           />
+          <!-- 图片加载失败时的默认显示 -->
+          <view class="gua-image-fallback" tt:if="{{item.imageError}}"></view>
+          
           <view class="gua-name-overlay">
             <!-- 根据字数显示不同布局 -->
             <view tt:if="{{item.guaName.length === 1}}" class="single-char">{{item.guaName}}</view>
@@ -37,6 +59,16 @@
           <view class="gua-desc">{{item.explanation}}</view>
         </view>
       </view>
+    </view>
+    
+    <!-- 加载更多提示 -->
+    <view class="load-more" tt:if="{{hasMore}}">
+      <view class="load-more-text">上拉加载更多</view>
+    </view>
+    
+    <!-- 全部加载完成提示 -->
+    <view class="load-complete" tt:if="{{!hasMore && guaList.length > 0}}">
+      <view class="load-complete-text">已显示全部卦象</view>
     </view>
   </view>
 </view>

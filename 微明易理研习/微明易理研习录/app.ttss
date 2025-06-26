@@ -33,3 +33,13 @@ page {
 .add-button::after {
   border: none;
 }
+
+/* 全局免责声明样式 - 已改为提示条样式，此样式不再使用 */
+.disclaimer {
+  display: none;
+}
+
+/* 为有固定底部声明的页面调整内容区域 */
+.page-with-disclaimer {
+  padding-bottom: 40px;
+}

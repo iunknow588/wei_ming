@@ -1,29 +1,191 @@
 <view class="container">
-  <view class="title">汉字起卦法</view>
-  <view class="form">
-    <view class="form-row">
-      <text>第一个汉字：</text>
-      <input type="text" value="{{charA}}" data-field="charA" bindinput="onInputChange" maxlength="1" />
-      <text>笔画数：</text>
-      <input type="number" value="{{strokesA}}" data-field="strokesA" bindinput="onStrokesInput" min="1" />
-    </view>
-    <view class="form-row">
-      <text>第二个汉字：</text>
-      <input type="text" value="{{charB}}" data-field="charB" bindinput="onInputChange" maxlength="1" />
-      <text>笔画数：</text>
-      <input type="number" value="{{strokesB}}" data-field="strokesB" bindinput="onStrokesInput" min="1" />
-    </view>
-    <view class="form-row">
-      <text>时辰数T（毫秒%9）：</text>
-      <text>{{timeT}}</text>
-      <button size="mini" bindtap="onRefreshTimeT">刷新T</button>
+  <!-- 页面标题 -->
+  <view class="divination-header">
+    <view class="header-title">汉字起卦法</view>
+    <view class="help-btn" bindtap="onShowHelp">❓</view>
+  </view>
+
+  <!-- 免责声明提示条 -->
+  <view class="disclaimer-banner" tt:if="{{showDisclaimer}}">
+    <view class="disclaimer-content">
+      <text class="disclaimer-text">{{disclaimerText}}</text>
+      <view class="disclaimer-close" bindtap="onCloseDisclaimer">✕</view>
     </view>
   </view>
-  <view class="result">
-    <text>上卦数：{{result.upper}}</text>
-    <text>下卦数：{{result.lower}}</text>
-    <text>动爻数：{{result.moving}}</text>
-    <text>卦象：{{result.guaName}}</text>
+
+  <!-- 起卦指导 -->
+  <view class="guidance">
+    <view class="guidance-title">起卦指导</view>
+    <view class="guidance-content">
+      <view class="guidance-item">1. 集中精神，默想所求测之事</view>
+      <view class="guidance-item">2. 从跑马灯中选择两个汉字</view>
+      <view class="guidance-item">3. 系统自动显示繁体字和笔画数</view>
+      <view class="guidance-item">4. 选择完成后自动生成卦象，当前仅使用公历时间</view>
+      <view class="guidance-item">5. 点击"结果解析"查看详细解释</view>
+    </view>
   </view>
-  <button bindtap="onBack">返回</button>
+
+  <!-- 起卦提示 -->
+  <view class="divination-subtitle">
+    <view class="header-subtitle">请集中意念，默想所求测之事</view>
+  </view>
+
+  <!-- 汉字选择区域 -->
+  <view class="character-selection-area">
+    <view class="selection-title">请选择两个汉字</view>
+    
+    <!-- 第一个汉字选择 -->
+    <view class="character-selection-group">
+      <view class="selection-label">第一个汉字</view>
+      <view class="marquee-container">
+        <view class="marquee-wrapper">
+          <view class="marquee-content" style="--marquee-duration: {{marqueeSpeedA}}s;">
+            <view 
+              class="char-item {{charA === availableChars[(marqueeStartA + marqueeOffsetA + index) % availableChars.length] ? 'selected' : ''}}" 
+              tt:for="{{marqueeIndexes}}" 
+              tt:key="index"
+              data-char="{{availableChars[(marqueeStartA + marqueeOffsetA + index) % availableChars.length]}}"
+              data-field="charA"
+              bindtap="onCharSelect"
+            >
+              {{availableChars[(marqueeStartA + marqueeOffsetA + index) % availableChars.length]}}
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 速度控制区域 -->
+      <view class="speed-control-area">
+        <!-- 减号按钮 -->
+        <view class="speed-control-btn speed-decrease" bindtap="onDecreaseSpeedA">
+          <text class="speed-btn-text">-</text>
+        </view>
+        
+        <!-- 速度显示 -->
+        <view class="speed-display">
+          <text class="speed-label">速度: {{marqueeRateA}}</text>
+        </view>
+        
+        <!-- 加号按钮 -->
+        <view class="speed-control-btn speed-increase" bindtap="onIncreaseSpeedA">
+          <text class="speed-btn-text">+</text>
+        </view>
+      </view>
+      
+      <view class="selected-char-display" tt:if="{{charA}}">
+        <text class="selected-char">{{charA}}</text>
+        <view class="char-details">
+          <text class="char-traditional">繁体：{{charInfoA.traditional}}</text>
+          <text class="char-strokes">笔画：{{strokesA}}</text>
+        </view>
+      </view>
+      
+      <!-- 调试信息：静态显示前10个汉字 -->
+      <view class="debug-info" tt:if="{{availableChars.length > 0}}">
+        <text class="debug-text">调试：前10个汉字 - {{availableChars.slice(0, 10).join(' ')}}</text>
+        <text class="debug-text">动画时间：第一个{{marqueeSpeedA}}秒，第二个{{marqueeSpeedB}}秒</text>
+      </view>
+    </view>
+
+    <!-- 第二个汉字选择 -->
+    <view class="character-selection-group">
+      <view class="selection-label">第二个汉字</view>
+      <view class="marquee-container">
+        <view class="marquee-wrapper">
+          <view class="marquee-content" style="--marquee-duration: {{marqueeSpeedB}}s;">
+            <view 
+              class="char-item {{charB === availableChars[(marqueeStartB + marqueeOffsetB + index) % availableChars.length] ? 'selected' : ''}}" 
+              tt:for="{{marqueeIndexes}}" 
+              tt:key="index"
+              data-char="{{availableChars[(marqueeStartB + marqueeOffsetB + index) % availableChars.length]}}"
+              data-field="charB"
+              bindtap="onCharSelect"
+            >
+              {{availableChars[(marqueeStartB + marqueeOffsetB + index) % availableChars.length]}}
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 速度控制区域 -->
+      <view class="speed-control-area">
+        <!-- 减号按钮 -->
+        <view class="speed-control-btn speed-decrease" bindtap="onDecreaseSpeedB">
+          <text class="speed-btn-text">-</text>
+        </view>
+        
+        <!-- 速度显示 -->
+        <view class="speed-display">
+          <text class="speed-label">速度: {{marqueeRateB}}</text>
+        </view>
+        
+        <!-- 加号按钮 -->
+        <view class="speed-control-btn speed-increase" bindtap="onIncreaseSpeedB">
+          <text class="speed-btn-text">+</text>
+        </view>
+      </view>
+      
+      <view class="selected-char-display" tt:if="{{charB}}">
+        <text class="selected-char">{{charB}}</text>
+        <view class="char-details">
+          <text class="char-traditional">繁体：{{charInfoB.traditional}}</text>
+          <text class="char-strokes">笔画：{{strokesB}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 时辰数显示 -->
+  <view class="time-display">
+    <view class="time-label">时辰数T（毫秒%9）：</view>
+    <view class="time-value">{{timeT}}</view>
+    <view class="refresh-btn" bindtap="onRefreshTimeT">刷新</view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <view class="action-btn divination-btn {{isDivinationDisabled ? 'disabled' : ''}}" bindtap="onGenerateGua">
+      <view class="btn-icon">📝</view>
+      <view class="btn-text"><view>生成</view><view>卦象</view></view>
+    </view>
+    
+    <!-- 保存卦象按钮，一直存在但根据状态灰化 -->
+    <view class="action-btn save-btn {{!result.upper ? 'disabled' : ''}} {{isCurrentGuaSaved ? 'saved' : ''}}" bindtap="onSaveCharacterDivinationToUserData">
+      <view class="btn-icon">{{isCurrentGuaSaved ? '✅' : '💾'}}</view>
+      <view class="btn-text"><view>保存</view><view>卦象</view></view>
+    </view>
+  </view>
+
+  <!-- 爻结果显示区域（与摇钱起卦页面一致） -->
+  <view class="yao-display-area">
+    <view class="yao-display-title">爻象结果（从底向上）</view>
+    <view class="yao-display-content">
+      <view class="yao-item {{item.isEmpty ? 'empty' : ''}}" tt:for="{{yaoResults}}" tt:key="index">
+        <view class="yao-number">{{item.number}}</view>
+        <view class="yao-symbol {{item.result.type}}" tt:if="{{!item.isEmpty}}">{{item.result.symbol}}</view>
+        <view class="yao-symbol empty" tt:if="{{item.isEmpty}}">—</view>
+        <view class="yao-desc" tt:if="{{!item.isEmpty}}">{{item.result.desc}}</view>
+        <view class="yao-desc empty" tt:if="{{item.isEmpty}}">待生成</view>
+        <view class="coin-status" tt:if="{{!item.isEmpty && item.result.coinStatusText}}">
+          <text class="coin-status-text">[{{item.result.coinStatusText}}]</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 页面底部操作按钮区 -->
+  <view class="footer-action-buttons">
+    <view class="action-btn" bindtap="onViewBianGua">
+      <view class="btn-icon">📖</view>
+      <view class="btn-text"><text>变卦</text><text>原理</text></view>
+    </view>
+    <view class="action-btn" bindtap="onNewDivination">
+      <view class="btn-icon">🔄</view>
+      <view class="btn-text"><text>重新</text><text>起卦</text></view>
+    </view>
+    <view class="action-btn result-btn {{isDivinationDisabled ? 'disabled' : ''}}" bindtap="onResultAnalysis">
+      <view class="btn-icon">📊</view>
+      <view class="btn-text"><text>结果</text><text>解析</text></view>
+    </view>
+  </view>
 </view> 

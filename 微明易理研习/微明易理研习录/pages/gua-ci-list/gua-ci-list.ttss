@@ -2,12 +2,83 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #d3d3d3 100%);
+  background: #f5f5f5;
   padding: 0;
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
   box-sizing: border-box;
+}
+
+/* 骨架屏样式 */
+.skeleton-container {
+  flex: 1;
+  background: rgba(245, 245, 245, 0.95);
+  margin: 15px;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: calc(100% - 30px);
+  max-width: calc(100vw - 30px);
+  box-sizing: border-box;
+}
+
+.skeleton-title {
+  height: 24px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeleton-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 12px;
+  background: white;
+}
+
+.skeleton-thumbnail {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.skeleton-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-line {
+  height: 16px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-line.short {
+  width: 60%;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* 64卦列表 */
@@ -17,22 +88,22 @@
   margin: 15px;
   border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 4px 15px rgba(105, 105, 105, 0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: calc(100% - 30px);
   max-width: calc(100vw - 30px);
   box-sizing: border-box;
   overflow-x: hidden;
-  border: 1px solid rgba(105, 105, 105, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .list-title {
   font-size: 20px;
   font-weight: bold;
-  color: #696969;
+  color: #333;
   text-align: center;
   margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 2px solid rgba(105, 105, 105, 0.2);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
   width: 100%;
   box-sizing: border-box;
   font-family: "SimSun", "宋体", serif;
@@ -52,8 +123,8 @@
   border-radius: 12px;
   padding: 12px;
   color: white;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -62,72 +133,49 @@
   max-width: 100%;
 }
 
-/* 已完成状态 - 淡蓝色到天蓝色渐变 */
+/* 已完成状态 - 简化渐变 */
 .gua-completed {
-  background: linear-gradient(135deg, #87ceeb 0%, #4682b4 50%, #1e90ff 100%);
+  background: #e3f2fd;
 }
 
-/* 已完成状态的文字颜色 - 深色文字，与背景形成强烈反差 */
 .gua-completed .gua-symbol {
-  color: #1a1a1a;
-  font-weight: 600;
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+  color: #1565c0;
+  font-weight: 700;
 }
 
 .gua-completed .gua-desc {
-  color: #2d2d2d;
-  font-weight: 500;
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+  color: #212121;
+  font-weight: 600;
 }
 
 .gua-completed .gua-name-overlay {
-  color: #1a1a1a;
+  color: #1565c0;
   font-weight: bold;
-  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
 }
 
-/* 未完成状态 - 质朴木质色调 */
+/* 未完成状态 - 简化渐变 */
 .gua-incomplete {
-  background: linear-gradient(135deg, #a9a9a9 0%, #808080 50%, #696969 100%);
+  background: #f3e5f5;
 }
 
-/* 未完成状态的文字颜色 - 保持原有的白色文字 */
 .gua-incomplete .gua-symbol {
-  color: rgba(255, 255, 255, 0.95);
-  font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  color: #424242;
+  font-weight: 600;
 }
 
 .gua-incomplete .gua-desc {
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.3;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  color: #616161;
+  line-height: 1.4;
+  font-weight: 500;
 }
 
 .gua-incomplete .gua-name-overlay {
-  color: #fff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-}
-
-.gua-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.06) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  color: #424242;
+  font-weight: bold;
 }
 
 .gua-item:active {
   transform: scale(0.98);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.gua-item:active::before {
-  opacity: 1;
 }
 
 /* 左侧圆形缩略图 */
@@ -139,15 +187,42 @@
   flex-shrink: 0;
 }
 
+/* 图片占位符 */
+.gua-image-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #f0f0f0;
+  border: 2px solid #ddd;
+}
+
+/* 图片样式 */
 .gua-image {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 2px solid rgba(105, 105, 105, 0.3);
-  box-shadow: 0 2px 8px rgba(105, 105, 105, 0.2);
-  background: linear-gradient(135deg, #f8f8f8 0%, #e6e6e6 100%);
-  opacity: 0.9;
-  filter: brightness(1.05) contrast(0.95) grayscale(0.1);
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  background: #f8f8f8;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gua-image.image-loaded {
+  opacity: 1;
+}
+
+/* 图片加载失败时的默认显示 */
+.gua-image-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #e0e0e0;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-size: 12px;
 }
 
 .gua-name-overlay {
@@ -169,10 +244,8 @@
   text-overflow: ellipsis;
   padding: 6px;
   box-sizing: border-box;
-  backdrop-filter: blur(1px);
   width: 100%;
   height: 100%;
-  color: #696969;
 }
 
 /* 单个字符样式 */
@@ -211,17 +284,15 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 0; /* 防止文字溢出 */
-  max-width: calc(100% - 72px); /* 减去左侧缩略图的宽度和间距 */
+  min-width: 0;
+  max-width: calc(100% - 72px);
   box-sizing: border-box;
 }
 
 .gua-symbol {
-  font-size: 18px;
+  font-size: 20px;
   margin-bottom: 6px;
-  color: rgba(255, 255, 255, 0.95);
   font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -231,10 +302,8 @@
 }
 
 .gua-desc {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
   line-height: 1.3;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -257,23 +326,10 @@
     font-family: "SimHei", "LiSu", "黑体", "隶书", sans-serif;
   }
   
-  /* 已完成状态在响应式下的文字颜色 */
-  .gua-completed .gua-name-overlay {
-    color: #1a1a1a;
-    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
-  }
-  
-  /* 未完成状态在响应式下的文字颜色 */
-  .gua-incomplete .gua-name-overlay {
-    color: #696969;
-  }
-  
-  /* 单个字符样式 */
   .single-char {
     font-size: 40px;
   }
   
-  /* 两个字符样式 */
   .double-char {
     gap: 0px;
   }
@@ -283,12 +339,36 @@
   }
   
   .gua-symbol {
-    font-size: 19px;
+    font-size: 20px;
   }
   
   .gua-desc {
-    font-size: 12px;
+    font-size: 13px;
   }
+}
+
+/* 加载更多样式 */
+.load-more {
+  text-align: center;
+  padding: 20px 0;
+  color: #999;
+}
+
+.load-more-text {
+  font-size: 14px;
+  color: #999;
+}
+
+/* 加载完成样式 */
+.load-complete {
+  text-align: center;
+  padding: 20px 0;
+  color: #666;
+}
+
+.load-complete-text {
+  font-size: 14px;
+  color: #666;
 }
 
 .logo-container {

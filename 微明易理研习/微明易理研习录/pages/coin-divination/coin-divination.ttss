@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #e3f2fd 0%, #a8e6cf 100%);
   padding: 20px;
   box-sizing: border-box;
 }
@@ -55,8 +55,8 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #ffd700, #ffed4e);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(145deg, #a8e6cf, #87ceeb);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,10 +64,12 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.6);
 }
 
 .coin:active {
-  transform: scale(0.95);
+  transform: scale(0.98);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .coin.spinning {
@@ -100,9 +102,9 @@
 
 .coin-label {
   font-size: 14px;
-  color: white;
+  color: #2c5aa0;
   font-weight: bold;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
 }
 
 /* 爻显示区域 */
@@ -257,37 +259,135 @@
 /* 操作按钮 */
 .action-buttons {
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  margin-bottom: 30px;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 10px 0;
+  flex-wrap: wrap;
 }
 
 .action-btn {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 12px;
-  padding: 20px 40px;
-  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  justify-content: center;
+  min-width: 90px;
+  max-width: 140px;
+  padding: 6px 10px;
+  font-size: 15px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+  color: #424242;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(105, 105, 105, 0.12);
+  border: 1px solid #d3d3d3;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.2s;
+  margin: 0;
+  flex: 1 1 100px;
+  max-height: 38px;
+  height: 38px;
+  box-sizing: border-box;
+}
+
+.action-btn .btn-icon {
+  font-size: 18px;
+  margin-right: 14px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 摇卦按钮特殊样式 */
+.divination-btn {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%) !important;
+}
+
+.divination-btn .btn-text {
+  color: white;
+}
+
+.divination-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+/* 中间按钮特殊样式 */
+.action-btn:nth-child(2) {
+  background: linear-gradient(135deg, #a8e6cf 0%, #87ceeb 100%);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 4px 12px rgba(168, 230, 207, 0.3);
+}
+
+.action-btn:nth-child(2) .btn-text {
+  color: #2c5aa0;
 }
 
 .action-btn:active {
-  transform: scale(0.95);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 中间按钮按下效果 */
+.action-btn:nth-child(2):active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(168, 230, 207, 0.4);
+}
+
+.action-btn.disabled {
+  background: #cccccc;
+  color: #999999;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.action-btn.disabled .btn-text {
+  color: #999999;
+}
+
+.action-btn.disabled .btn-icon {
+  opacity: 0.6;
+}
+
+/* 隐藏状态 */
+.action-btn.hidden {
+  display: none;
 }
 
 .btn-icon {
-  font-size: 32px;
+  font-size: 18px;
+  margin-right: 6px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coin-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
 }
 
 .btn-text {
-  font-size: 18px;
-  color: #333;
-  font-weight: bold;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1.1;
+}
+
+.btn-text text {
+  display: block;
+  width: 100%;
+  text-align: left;
 }
 
 /* 指导信息 */
@@ -360,6 +460,27 @@
   .btn-text {
     font-size: 16px;
   }
+  
+  .footer-action-buttons {
+    gap: 6px;
+    padding: 0 8px;
+  }
+  
+  .footer-action-buttons .action-btn {
+    min-width: 70px;
+    max-width: 100px;
+    padding: 10px 6px;
+  }
+  
+  .footer-action-buttons .btn-icon {
+    font-size: 18px;
+    width: 28px;
+    height: 28px;
+  }
+  
+  .footer-action-buttons .btn-text {
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -391,6 +512,28 @@
   
   .action-btn {
     padding: 14px 28px;
+  }
+  
+  .footer-action-buttons {
+    gap: 4px;
+    padding: 0 5px;
+  }
+  
+  .footer-action-buttons .action-btn {
+    min-width: 60px;
+    max-width: 90px;
+    padding: 8px 4px;
+    margin: 2px;
+  }
+  
+  .footer-action-buttons .btn-icon {
+    font-size: 16px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .footer-action-buttons .btn-text {
+    font-size: 10px;
   }
 }
 
@@ -442,36 +585,6 @@
 .bold-text {
   font-weight: bold;
   color: #000;
-}
-
-.divination-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 20rpx 40rpx;
-  font-size: 32rpx;
-  font-weight: bold;
-  box-shadow: 0 8rpx 20rpx rgba(102, 126, 234, 0.3);
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-  min-width: 200rpx;
-  justify-content: center;
-}
-
-.divination-btn.disabled {
-  background: #cccccc;
-  color: #999999;
-  box-shadow: none;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.divination-btn:active:not(.disabled) {
-  transform: translateY(4rpx);
-  box-shadow: 0 4rpx 10rpx rgba(102, 126, 234, 0.3);
 }
 
 /* 高亮样式 */
@@ -556,9 +669,187 @@
 
 .footer-action-buttons {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 32px;
-  margin-bottom: 20px;
-  margin-top: 0;
+  gap: 16px;
+  padding: 8px 0 0 0;
+  flex-wrap: wrap;
+}
+
+.footer-action-buttons .action-btn {
+  min-width: 70px;
+  max-width: 110px;
+  padding: 8px 6px;
+  font-size: 13px;
+  border-radius: 8px;
+  flex: 1 1 0;
+  margin: 0;
+  box-sizing: border-box;
+  max-height: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-action-buttons .btn-icon {
+  font-size: 16px;
+  width: 22px;
+  height: 22px;
+  margin-right: 2px;
+}
+
+.footer-action-buttons .btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  white-space: normal;
+  line-height: 1.1;
+  height: 32px;
+}
+
+.footer-action-buttons .btn-text text {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 400px) {
+  .footer-action-buttons .action-btn {
+    min-width: 54px;
+    max-width: 80px;
+    padding: 6px 2px;
+    font-size: 11px;
+  }
+  .footer-action-buttons .btn-icon {
+    font-size: 13px;
+    width: 16px;
+    height: 16px;
+    margin-right: 1px;
+  }
+  .footer-action-buttons .btn-text {
+    font-size: 10px;
+  }
+  .footer-action-buttons {
+    gap: 8px;
+    padding: 4px 0 0 0;
+  }
+}
+
+/* 保存按钮样式 */
+.save-btn {
+  background: linear-gradient(135deg, #e0f9e0 0%, #b2f2c9 50%, #a0eac4 100%) !important;
+  border: 1px solid #b2f2c9;
+  box-shadow: 0 2px 6px rgba(160, 234, 196, 0.18);
+}
+
+.save-btn .btn-text {
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1.1;
+}
+
+.save-btn .btn-text text {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.save-btn.saved {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.save-btn.saved .btn-text {
+  color: #e9ecef;
+}
+
+.save-btn:active:not(.disabled) {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.4);
+}
+
+.save-btn.saved:active:not(.disabled) {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.4);
+}
+
+/* 保存按钮禁用状态 */
+.save-btn.disabled {
+  background: #cccccc;
+  color: #999999;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.save-btn.disabled .btn-text {
+  color: #999999;
+}
+
+.save-btn.disabled .btn-icon {
+  opacity: 0.6;
+}
+
+.footer-action-buttons .action-btn .btn-icon {
+  margin-right: 14px !important;
+}
+
+/* 免责声明提示条样式 */
+.disclaimer-banner {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+  padding: 8px 12px;
+  margin: 0 10px 10px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  position: relative;
+}
+
+.disclaimer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.disclaimer-text {
+  color: #FFFFFF;
+  font-size: 11px;
+  line-height: 1.4;
+  flex: 1;
+  font-family: "SimHei", "黑体", sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.disclaimer-close {
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.disclaimer-close:active {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* 移除原来的固定底部免责声明样式 */
+.disclaimer {
+  display: none;
 } 

@@ -1,20 +1,87 @@
 <view class="container">
-  <view class="title">数字起卦法</view>
-  <view class="form">
-    <view class="form-row">
-      <text>十位数：</text>
-      <input type="number" value="{{ten}}" data-field="ten" bindinput="onInputChange" maxlength="1" />
-    </view>
-    <view class="form-row">
-      <text>个位数：</text>
-      <input type="number" value="{{unit}}" data-field="unit" bindinput="onInputChange" maxlength="1" />
+  <!-- 摇钱起卦页面 -->
+  <view class="divination-header">
+    <view class="header-title">摇钱起卦</view>
+  </view>
+
+ <!-- 免责声明提示条 -->
+  <view class="disclaimer-banner" tt:if="{{showDisclaimer}}">
+    <view class="disclaimer-content">
+      <text class="disclaimer-text">{{disclaimerText}}</text>
+      <view class="disclaimer-close" bindtap="onCloseDisclaimer">✕</view>
     </view>
   </view>
-  <view class="result">
-    <text>上卦数：{{result.upper}}</text>
-    <text>下卦数：{{result.lower}}</text>
-    <text>动爻数：{{result.moving}}</text>
-    <text>卦象：{{result.guaName}}</text>
+
+  <!-- 起卦指导，放在标题下方 -->
+  <view class="guidance">
+    <view class="guidance-title">起卦指导</view>
+    <view class="guidance-content">
+      <view class="guidance-item">1. 集中精神，默想所求测之事</view>
+      <view class="guidance-item">2. 在下方输入任意两位数（10~99）</view>
+      <view class="guidance-item">3. 点击"生成卦象"按钮</view>
+      <view class="guidance-item">4. 查看自动生成的卦象结果</view>
+    </view>
   </view>
-  <button bindtap="onBack">返回</button>
+
+  <!-- 起卦提示 -->
+  <view class="divination-subtitle">
+    <view class="header-subtitle">请集中意念，默想所求测之事</view>
+  </view>
+
+  <!-- 数字输入区域 -->
+  <view class="number-input-area">
+    <view class="number-input-label">请输入任意两位数（10~99）：</view>
+    <input class="number-input" type="number" maxlength="2" placeholder="如：56" value="{{numberInput}}" bindinput="onNumberInput" />
+  </view>
+
+  <!-- 操作按钮（生成卦象和保存并排显示） -->
+  <view class="action-buttons">
+    <view class="action-btn divination-btn {{isDivinationDisabled ? 'disabled' : ''}}" bindtap="onDivination">
+      <view class="btn-icon">🔢</view>
+      <view class="btn-text"><view>生成</view><view>卦象</view></view>
+    </view>
+    <!-- 保存卦象按钮，一直存在但根据状态灰化 -->
+    <view class="action-btn save-btn {{isDivinationDisabled ? 'disabled' : ''}} {{isCurrentGuaSaved ? 'saved' : ''}}" bindtap="onSaveCoinDivinationToUserData">
+      <view class="btn-icon">{{isCurrentGuaSaved ? '✅' : '💾'}}</view>
+      <view class="btn-text"><view>保存</view><view>卦象</view></view>
+    </view>
+  </view>
+
+  <!-- 爻结果显示区域 -->
+  <view class="yao-display-area">
+    <view class="yao-display-title">爻象结果（从底向上）</view>
+    <view class="yao-display-content">
+      <!-- 从底向上显示爻象，按照传统易学习惯 -->
+      <view class="yao-item {{item.isEmpty ? 'empty' : ''}}" tt:for="{{yaoResults}}" tt:key="index">
+        <view class="yao-number">{{item.number}}</view>
+        <view class="yao-symbol {{item.result.type}}" tt:if="{{!item.isEmpty}}">{{item.result.symbol}}</view>
+        <view class="yao-symbol empty" tt:if="{{item.isEmpty}}">—</view>
+        <view class="yao-desc" tt:if="{{!item.isEmpty}}">{{item.result.desc}}</view>
+        <view class="yao-desc empty" tt:if="{{item.isEmpty}}">待输入</view>
+        <!-- 显示铜钱状态 -->
+        <view class="coin-status" tt:if="{{!item.isEmpty && item.result.coinStatusText}}">
+          <text class="coin-status-text">[{{item.result.coinStatusText}}]</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 页面底部操作按钮区 -->
+  <view class="footer-action-buttons">
+    <view class="action-btn" bindtap="onViewBianGua">
+      <view class="btn-icon">🔄</view>
+      <view class="btn-text"><text>变卦</text><text>原理</text></view>
+    </view>
+    <view class="action-btn" bindtap="onNewDivination">
+      <view class="btn-icon">🔄</view>
+      <view class="btn-text"><text>重新</text><text>起卦</text></view>
+    </view>
+    <view class="action-btn result-btn {{isDivinationDisabled ? 'disabled' : ''}}" bindtap="onResultAnalysis">
+      <view class="btn-icon">🔄</view>
+      <view class="btn-text"><text>结果</text><text>解析</text></view>
+    </view>
+  </view>
+
+  <!-- 结果区域 -->
+  <!-- 已迁移到 result-analysis 页面，原地删除 -->
 </view> 

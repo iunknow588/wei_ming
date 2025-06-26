@@ -11,6 +11,7 @@
         "libVersion": "2.32.0"
     },
     "appid": "tt7aed0c50e5e4402101",
-    "projectname": "微明易理研习录",
-    "douyinProjectType": "native"
+    "projectname": "微明.易理研习录",
+    "douyinProjectType": "native",
+    "version": "0.0.1"
 }

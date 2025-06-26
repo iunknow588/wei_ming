@@ -1,5 +1,19 @@
 <view class="container">
+  <!-- 页面标题 -->
+  <view class="result-header">
+    <view class="header-title">卦象结果分析</view>
+  </view>
+
+  <!-- 免责声明提示条 -->
+  <view class="disclaimer-banner" tt:if="{{showDisclaimer}}">
+    <view class="disclaimer-content">
+      <text class="disclaimer-text">{{disclaimerText}}</text>
+      <view class="disclaimer-close" bindtap="onCloseDisclaimer">✕</view>
+    </view>
+  </view>
+
   <view class="result-title">结果解析</view>
+  
   <view class="yao-display-area">
     <view class="yao-display-title">爻象结果（从底向上）</view>
     <view class="yao-display-content">
