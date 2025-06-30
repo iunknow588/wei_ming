@@ -12,16 +12,10 @@
   
   <view class="gua-detail-header">
     <view class="gua-title-container">
-      <text class="gua-detail-title">{{gua.guaName}}</text>
+      <text class="gua-detail-title">{{gua.simpleGuaName}}</text>
       <!-- 卦象绘制区域 -->
       <view class="gua-symbol-container">
-        <!-- Canvas卦象绘制（已移除） -->
-        <!-- <canvas class="gua-symbol-canvas" canvas-id="guaSymbol" type="2d" bindtouchstart="onCanvasTouch"></canvas> -->
-        <!-- 备用SVG显示（已移除） -->
-        <!-- <view class="gua-symbol-svg" tt:if="{{guaSymbolSVG}}" bindtap="onCanvasTouch" style="display: none;">
-          <rich-text nodes="{{guaSymbolSVG}}"></rich-text>
-        </view> -->
-        <!-- 新的卦象显示（主要显示方式） -->
+        <!-- 卦象显示 -->
         <view class="gua-symbol-new" bindtap="onCanvasTouch" tt:if="{{guaComponents}}">
           <!-- 上三爻 -->
           <view class="upper-trigram">
@@ -48,37 +42,94 @@
             <text class="bagua-name">{{guaComponents.lower}}</text>
           </view>
         </view>
-        
-        <!-- 纯CSS卦象显示（备用，已移除） -->
-        <!-- <view class="gua-symbol-css" bindtap="onCanvasTouch" tt:if="{{guaLines.length > 0 && !guaComponents}}">
-          <view class="gua-lines">
-            <view class="gua-line" tt:for="{{guaLines}}" tt:for-item="line" tt:for-index="lineIndex">
-              <view class="line-segment {{line === 1 ? 'yang' : 'yin-left'}}"></view>
-              <view class="line-segment {{line === 1 ? 'yang' : 'yin-right'}}" tt:if="{{line === 0}}"></view>
-            </view>
-          </view>
-        </view> -->
       </view>
     </view>
   </view>
+  
   <view class="gua-detail-content">
-    <view class="gua-detail-section">
+    <!-- 卦辞部分 -->
+    <view class="gua-detail-section" tt:if="{{gua.guaCi}}">
       <text class="section-label">卦辞：</text>
       <text class="section-content">{{gua.guaCi}}</text>
     </view>
-    <view class="gua-detail-section">
+    
+    <!-- 卦解部分 -->
+    <view class="gua-detail-section" tt:if="{{gua.guaJie}}">
+      <text class="section-label">卦解：</text>
+      <text class="section-content">{{gua.guaJie}}</text>
+    </view>
+    
+    <!-- 爻辞部分 -->
+    <view class="gua-detail-section" tt:if="{{gua.yao && gua.yao.length > 0}}">
       <text class="section-label">爻辞：</text>
       <view class="yao-list">
-        <text class="yao-item" tt:for="{{gua.yaoCi}}" tt:for-item="yao">{{yao}}</text>
+        <view class="yao-item" tt:for="{{gua.yao}}" tt:for-item="yao" tt:for-index="yaoIndex">
+          <!-- 爻辞文本 -->
+          <view class="yao-text-container">
+            <text class="yao-text">{{yao.yao_text}}</text>
+          </view>
+          
+          <!-- 爻注 -->
+          <view class="yao-comment-container" tt:if="{{yao.yao_comment}}">
+            <text class="yao-comment">{{yao.yao_comment}}</text>
+          </view>
+          
+          <!-- 故事名称 -->
+          <view class="story-name-container" tt:if="{{yao.story_name}}">
+            <text class="story-name">{{yao.story_name}}</text>
+          </view>
+          
+          <!-- 故事概述 -->
+          <view class="story-overview-container" tt:if="{{yao.story_overview}}">
+            <text class="story-overview">{{yao.story_overview}}</text>
+          </view>
+          
+          <!-- 启示 -->
+          <view class="inspiration-container" tt:if="{{yao.inspiration}}">
+            <text class="inspiration">{{yao.inspiration}}</text>
+          </view>
+        </view>
       </view>
     </view>
-    <view class="gua-detail-section">
-      <text class="section-label">注意事项：</text>
-      <text class="section-content">{{gua.explanation}}</text>
+    
+    <!-- 简单爻辞显示（备用） -->
+    <view class="gua-detail-section" tt:if="{{!gua.yao || gua.yao.length === 0}}">
+      <text class="section-label">爻辞：</text>
+      <view class="yao-list">
+        <text class="yao-item-simple" tt:for="{{gua.yaoCi}}" tt:for-item="yao" tt:for-index="yaoIndex">{{yaoIndex + 1}}. {{yao}}</text>
+      </view>
     </view>
-    <view class="gua-detail-section">
-      <text class="section-label">历史典故：</text>
-      <text class="section-content">（待补充）</text>
+  </view>
+  
+  <!-- 学习状态区域 -->
+  <view class="study-status-section">
+    <view class="study-status-container">
+      <view class="study-status-info">
+        <text class="study-status-text {{studyStatus.isCompleted ? 'completed' : 'not-completed'}}">
+          {{studyStatus.statusText}}
+        </text>
+        <text class="study-status-icon {{studyStatus.isCompleted ? 'completed-icon' : 'not-completed-icon'}}">
+          {{studyStatus.statusIcon}}
+        </text>
+      </view>
+      
+      <!-- 未登录时显示登录按钮 -->
+      <button 
+        class="login-button"
+        bindtap="onLoginTap"
+        tt:if="{{!isLoggedIn}}"
+      >
+        登录
+      </button>
+      
+      <!-- 已登录时显示学习状态切换按钮 -->
+      <button 
+        class="study-status-button {{studyStatus.isCompleted ? 'reset-button' : 'complete-button'}}"
+        bindtap="toggleStudyStatus"
+        tt:if="{{isLoggedIn}}"
+      >
+        {{studyStatus.buttonText}}
+      </button>
     </view>
   </view>
 </view> 

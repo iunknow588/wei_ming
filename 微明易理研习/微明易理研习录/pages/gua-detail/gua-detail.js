@@ -1,208 +1,391 @@
 const app = getApp();
-const { sixtyFourGuaData, getStudyProgress, updateStudyProgress } = require('../../data/sixtyFourGua.js');
+const { sixtyFourGuaData } = require('../../data/sixtyFourGua.js');
+// 导入学习进度管理模块
+const { getGuaStudyStatus, updateGuaStudyStatus } = require('../../utils/study-progress-manager.js');
 // 导入授权管理器
 const authManager = require('../../utils/auth.js');
 // 导入卦象绘制工具
-const { drawGuaSymbol, createGuaSVG, getGuaLines, getGuaComponents } = require('../../utils/gua-drawer.js');
+const { getGuaComponents } = require('../../utils/gua-drawer.js');
+// 导入爻辞数据
+const { getGuaDetail } = require('../../data/yaoIndex.js');
+// 导入延时加载管理器
+const { lazyLoadManager } = require('../../utils/lazy-load-manager.js');
+// 导入64卦名称数组
+const { GUA_NAMES } = require('../../utils/gua-utils.js');
 
 Page({
   data: {
-    gua: {},
-    index: null,
-    guaSymbolSVG: '',
-    guaLines: [],
-    guaComponents: null
+    gua: null,
+    isLoading: true,
+    error: null,
+    guaInfo: null,
+    guaComponents: null,
+    loadSource: '', // 数据加载来源：'cache', 'lazy_load', 'direct_load'
+    studyStatus: {
+      isCompleted: false,
+      statusText: '未阅',
+      statusIcon: '❓',
+      buttonText: '完成'
+    },
+    isLoggedIn: false // 登录状态
   },
+
   onLoad(options) {
-    // options.index 传递过来的卦象索引
-    const index = Number(options.index);
-    const gua = { ...sixtyFourGuaData[index] };
-    // 获取学习进度
-    const studyProgress = getStudyProgress(index);
-    gua.completed = studyProgress ? studyProgress.completed : false;
-    
-    // 使用原始路径格式，但确保路径正确
-    if (gua && gua.image) {
-      // 保持原始路径格式，但确保是相对路径
-      const imagePath = `../../assets/images/${index + 1}.jpg`;
-      gua.image = imagePath;
+    const { guaIndex } = options;
+    if (!guaIndex) {
+      this.setData({
+        error: '缺少卦索引参数',
+        isLoading: false
+      });
+      return;
     }
+
+    this.guaIndex = parseInt(guaIndex);
     
-    this.setData({ gua, index });
+    // 设置导航栏标题
+    this.setNavigationBarTitle();
     
-    // 设置页面背景色为卦象图片
-    if (gua && gua.image) {
-      this.setPageBackground(gua.image);
-    }
-    
-    // 绘制卦象
-    this.drawGuaSymbol(index);
-    
-    // 标记为已完成（用户进入详情页就表示开始学习）
-    if (index !== null) {
-      updateStudyProgress(index, true);
-      // 保存到本地
-      try {
-        tt.setStorageSync('sixtyFourGuaDataStudy', require('../../data/sixtyFourGua.js').sixtyFourGuaDataStudy);
-      } catch (e) {
-        console.error('保存学习进度失败', e);
-      }
-      console.log(`卦象 ${index + 1} 已标记为完成`);
-    }
-  },
-  
-  // 设置页面背景色
-  setPageBackground(imagePath) {
-    // 使用tt.setNavigationBarColor设置导航栏颜色
-    tt.setNavigationBarColor({
-      frontColor: '#ffffff',
-      backgroundColor: '#667eea',
-      animation: {
-        duration: 300,
-        timingFunc: 'easeIn'
-      },
-      success: (res) => {
-        console.log('导航栏颜色设置成功:', res);
-      },
-      fail: (err) => {
-        console.error('导航栏颜色设置失败:', err);
-      }
-    });
-  },
-  
-  // 图片加载成功处理
-  onImageLoad(e) {
-    // 检查图片尺寸和质量
-    const { width, height } = e.detail;
-    
-    // 如果图片尺寸太小，可能影响清晰度
-    if (width < 750 || height < 1334) {
-      console.warn('图片分辨率较低，可能影响显示效果');
-    }
+    // 尝试从延时加载缓存获取数据
+    this.loadGuaData();
   },
 
-  // 图片加载失败处理
-  onImageError(e) {
-    console.error('背景图片加载失败:', e);
-    // 如果图片加载失败，可以设置一个默认背景
-    this.setData({
-      'gua.image': '../../assets/images/1.jpg' // 使用默认图片
+  onShow() {
+    // 页面显示时重新加载学习状态和检查登录状态
+    this.loadStudyStatus();
+    this.checkLoginStatus();
+  },
+
+  onReady() {
+    // 页面准备完成
+  },
+
+  onError(error) {
+    console.error('[gua-detail] 页面错误:', error);
+  },
+
+  // 设置导航栏标题
+  setNavigationBarTitle() {
+    const guaName = GUA_NAMES[this.guaIndex - 1] || '未知';
+    const title = `第${this.guaIndex}卦：${guaName}卦`;
+    
+    tt.setNavigationBarTitle({
+      title: title
     });
   },
 
-  // 绘制卦象
-  drawGuaSymbol(guaIndex) {
-    // 获取卦象组件数据
-    const components = getGuaComponents(guaIndex);
-    this.setData({
-      guaComponents: components
-    });
-  },
-  
-  // 在Canvas上绘制卦象
-  drawGuaSymbolToCanvas(guaIndex) {
-    const query = tt.createSelectorQuery();
-    query.select('.gua-symbol-canvas')
-      .fields({ node: true, size: true })
-      .exec((res) => {
-        if (res[0]) {
-          const canvas = res[0].node;
-          const ctx = canvas.getContext('2d');
-          
-          // 设置canvas尺寸
-          const dpr = tt.getSystemInfoSync().pixelRatio;
-          canvas.width = 100 * dpr;
-          canvas.height = 160 * dpr;
-          ctx.scale(dpr, dpr);
-          
-          // 绘制卦象
-          drawGuaSymbol(canvas, guaIndex, {
-            width: 100,
-            height: 160,
-            lineWidth: 6,
-            lineColor: '#333',
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            padding: 8
-          });
+  // 加载卦数据
+  async loadGuaData() {
+    try {
+      this.setData({ isLoading: true, error: null });
+      
+      let guaData = null;
+      let loadSource = '';
+      
+      // 1. 首先尝试从延时加载缓存获取
+      guaData = lazyLoadManager.getGuaData(this.guaIndex);
+      if (guaData) {
+        loadSource = 'cache';
+      } else {
+        // 2. 如果缓存中没有，检查是否正在加载
+        if (lazyLoadManager.isDataLoading(this.guaIndex)) {
+          loadSource = 'lazy_load';
+          guaData = await lazyLoadManager.loadGuaData(this.guaIndex);
         } else {
-          console.error('未找到Canvas元素');
+          // 3. 直接加载数据
+          loadSource = 'direct_load';
+          guaData = await lazyLoadManager.loadGuaData(this.guaIndex);
         }
-      });
-  },
-  
-  // Canvas触摸事件处理
-  onCanvasTouch(e) {
-    // 可以在这里添加交互效果，比如放大显示卦象
-    this.showGuaSymbolDetail();
-  },
-  
-  // 显示卦象详情
-  showGuaSymbolDetail() {
-    const { index, gua, guaComponents } = this.data;
-    if (index !== null && gua) {
-      const guaNumber = index + 1;
-      const lines = getGuaLines(index);
-      const yangCount = lines ? lines.filter(line => line === 1).length : 0;
-      const yinCount = lines ? lines.filter(line => line === 0).length : 0;
-      
-      let content = `卦象由六爻组成：\n阳爻：${yangCount}个\n阴爻：${yinCount}个`;
-      
-      if (guaComponents) {
-        content += `\n\n上卦：${guaComponents.upper}\n下卦：${guaComponents.lower}`;
       }
       
-      tt.showModal({
-        title: `第${guaNumber}卦：${gua.guaName}`,
-        content: content,
-        showCancel: false,
-        confirmText: '关闭',
-        success: (res) => {
-          // 用户点击关闭按钮
-        }
+      // 处理卦数据
+      const processedGua = this.processGuaData(guaData);
+      
+      this.setData({
+        gua: processedGua,
+        isLoading: false,
+        loadSource: loadSource
+      });
+      
+      // 加载学习状态
+      this.loadStudyStatus();
+      
+      // 检查登录状态
+      this.checkLoginStatus();
+      
+      console.log('[gua-detail] 数据加载成功:', processedGua);
+      
+    } catch (error) {
+      console.error('[gua-detail] 数据加载失败:', error);
+      
+      this.setData({
+        error: error.message || '数据加载失败',
+        isLoading: false
       });
     }
+  },
+
+  // 处理卦数据
+  processGuaData(guaData) {
+    if (!guaData) {
+      throw new Error('卦数据为空');
+    }
+
+    // 设置卦象组件
+    this.setGuaComponents(guaData);
+    
+    // 获取简化的卦名
+    const simpleGuaName = GUA_NAMES[this.guaIndex - 1] || `第${this.guaIndex}卦`;
+    
+    return {
+      guaName: guaData.gua_name || `第${this.guaIndex}卦`,
+      simpleGuaName: simpleGuaName, // 添加简化的卦名
+      guaCi: guaData.gua_ci || '',
+      guaJie: guaData.gua_jie || '',
+      yao: guaData.yao || [],
+      yaoCi: guaData.yao_ci || [],
+      image: guaData.image || '',
+      ...guaData
+    };
+  },
+
+  // 设置卦象组件
+  setGuaComponents(guaData) {
+    try {
+      // 根据卦索引生成正确的卦象组件
+      const guaIndex = this.guaIndex - 1; // 转换为0-63的索引
+      
+      // 使用app.js中的GUA_CODE_MAP来获取卦象信息
+      const guaCodeMap = app.globalData.guaCodeMap;
+      
+      // 找到对应的卦象编码
+      let guaCode = null;
+      for (const [code, info] of Object.entries(guaCodeMap)) {
+        if (info.index === guaIndex) {
+          guaCode = code;
+          break;
+        }
+      }
+      
+      if (guaCode) {
+        // 将6位二进制码转换为上下卦
+        const upperCode = guaCode.substring(0, 3);
+        const lowerCode = guaCode.substring(3, 6);
+        
+        // 将二进制码转换为爻数组
+        const upperLines = upperCode.split('').map(bit => parseInt(bit));
+        const lowerLines = lowerCode.split('').map(bit => parseInt(bit));
+        
+        // 根据爻数组确定八卦名称
+        const baguaNames = ['坤', '艮', '坎', '巽', '震', '离', '兑', '乾'];
+        const upperBagua = this.getBaguaName(upperLines);
+        const lowerBagua = this.getBaguaName(lowerLines);
+        
+        const guaComponents = {
+          upper: upperBagua,
+          lower: lowerBagua,
+          upperLines: upperLines,
+          lowerLines: lowerLines
+        };
+        
+        this.setData({ guaComponents });
+      } else {
+        // 如果找不到对应的卦象，使用默认值
+        const guaComponents = {
+          upper: '乾',
+          lower: '坤',
+          upperLines: [1, 1, 1],
+          lowerLines: [0, 0, 0]
+        };
+        
+        this.setData({ guaComponents });
+      }
+    } catch (error) {
+      console.error('设置卦象组件失败:', error);
+      
+      // 出错时使用默认值
+      const guaComponents = {
+        upper: '乾',
+        lower: '坤',
+        upperLines: [1, 1, 1],
+        lowerLines: [0, 0, 0]
+      };
+      
+      this.setData({ guaComponents });
+    }
+  },
+
+  // 根据爻数组获取八卦名称
+  getBaguaName(lines) {
+    const baguaMap = {
+      '000': '坤',
+      '001': '艮', 
+      '010': '坎',
+      '011': '巽',
+      '100': '震',
+      '101': '离',
+      '110': '兑',
+      '111': '乾'
+    };
+    
+    const code = lines.join('');
+    return baguaMap[code] || '乾';
+  },
+
+  // 图片加载完成
+  onImageLoad(e) {
+    console.log('[gua-detail] 图片加载完成');
+  },
+
+  // 图片加载失败
+  onImageError(e) {
+    console.error('[gua-detail] 图片加载失败:', e);
+  },
+
+  // 卦象点击事件
+  onCanvasTouch(e) {
+    console.log('[gua-detail] 卦象被点击');
+    // 可以添加卦象交互逻辑
+  },
+
+  onShareAppMessage() {
+    const guaName = GUA_NAMES[this.guaIndex - 1] || '未知';
+    
+    return {
+      title: `第${this.guaIndex}卦：${guaName}卦详解`,
+      path: `/pages/gua-detail/gua-detail?guaIndex=${this.guaIndex}`
+    };
   },
 
   onUnload() {
-    if (this.data.index !== null) {
-      updateStudyProgress(this.data.index, true);
-      try {
-        tt.setStorageSync('sixtyFourGuaDataStudy', require('../../data/sixtyFourGua.js').sixtyFourGuaDataStudy);
-      } catch (e) {
-        console.error('保存学习进度失败', e);
+    // 页面卸载时的清理工作
+    console.log('[gua-detail] 页面卸载');
+  },
+
+  onHide() {
+    // 页面隐藏时的清理工作
+    console.log('[gua-detail] 页面隐藏');
+  },
+
+  // 加载学习状态
+  loadStudyStatus() {
+    try {
+      const studyProgress = getGuaStudyStatus(this.guaIndex);
+      const isCompleted = studyProgress ? studyProgress.completed : false;
+      
+      const studyStatus = {
+        isCompleted: isCompleted,
+        statusText: isCompleted ? '已阅' : '未阅',
+        statusIcon: isCompleted ? '✅' : '❓',
+        buttonText: isCompleted ? '重置为未学习状态' : '完成'
+      };
+      
+      this.setData({ studyStatus });
+      
+      console.log('[gua-detail] 学习状态加载成功:', studyStatus);
+    } catch (error) {
+      console.error('[gua-detail] 学习状态加载失败:', error);
+    }
+  },
+
+  // 检查登录状态
+  checkLoginStatus() {
+    try {
+      const isLoggedIn = authManager.isLoggedIn();
+      this.setData({ isLoggedIn });
+      console.log('[gua-detail] 登录状态检查:', isLoggedIn);
+    } catch (error) {
+      console.error('[gua-detail] 登录状态检查失败:', error);
+      this.setData({ isLoggedIn: false });
+    }
+  },
+
+  // 登录按钮点击事件
+  async onLoginTap() {
+    try {
+      console.log('[gua-detail] 用户点击登录按钮');
+      
+      // 执行登录流程
+      const user = await authManager.login('用于保存您的学习进度');
+      
+      if (user) {
+        console.log('[gua-detail] 登录成功:', user);
+        
+        // 更新登录状态
+        this.checkLoginStatus();
+        
+        // 显示成功提示
+        tt.showToast({
+          title: '登录成功',
+          icon: 'success',
+          duration: 2000
+        });
+        
+        // 登录成功后，可以尝试重新保存学习状态
+        // 这里可以添加一个提示，让用户再次点击学习状态按钮
+        setTimeout(() => {
+          tt.showToast({
+            title: '现在可以保存学习进度了',
+            icon: 'none',
+            duration: 2000
+          });
+        }, 2000);
       }
+    } catch (error) {
+      console.error('[gua-detail] 登录失败:', error);
+      
+      // 显示登录失败提示
+      tt.showToast({
+        title: '登录失败，请重试',
+        icon: 'error',
+        duration: 2000
+      });
+    }
+  },
+
+  // 切换学习状态
+  async toggleStudyStatus() {
+    try {
+      const currentStatus = this.data.studyStatus.isCompleted;
+      const newStatus = !currentStatus;
+      
+      // 更新学习进度（异步，需要登录检测）
+      const updateSuccess = await updateGuaStudyStatus(this.guaIndex, newStatus);
+      
+      if (!updateSuccess) {
+        // 更新失败（可能是用户取消登录或登录失败）
+        console.log('[gua-detail] 学习状态更新失败或用户取消');
+        return;
+      }
+      
+      // 更新页面状态
+      this.loadStudyStatus();
+      
+      // 显示提示
+      const message = newStatus ? '已标记为完成学习' : '已重置为未学习状态';
+      tt.showToast({
+        title: message,
+        icon: 'success',
+        duration: 2000
+      });
+      
+      console.log(`[gua-detail] 学习状态已切换: ${currentStatus} -> ${newStatus}`);
       
       // 通知前一页刷新
       const pages = getCurrentPages();
       if (pages.length > 1) {
         const prevPage = pages[pages.length - 2];
-        if (prevPage) {
-          // 如果前一页有refreshGuaList方法，调用它
-          if (prevPage.refreshGuaList) {
-            prevPage.refreshGuaList();
-          }
-          // 如果前一页有setData方法，强制刷新数据
-          else if (prevPage.setData) {
-            prevPage.setData({
-              forceRefresh: Date.now() // 强制刷新
-            });
-          }
+        if (prevPage && prevPage.refreshGuaList) {
+          prevPage.refreshGuaList();
         }
       }
       
-      console.log(`卦象 ${this.data.index + 1} 已标记为完成`);
-    }
-  },
-
-  // 页面隐藏时也标记为完成（用户可能通过其他方式离开页面）
-  onHide() {
-    if (this.data.index !== null) {
-      updateStudyProgress(this.data.index, true);
-      try {
-        tt.setStorageSync('sixtyFourGuaDataStudy', require('../../data/sixtyFourGua.js').sixtyFourGuaDataStudy);
-      } catch (e) {
-        console.error('保存学习进度失败', e);
-      }
+    } catch (error) {
+      console.error('[gua-detail] 切换学习状态失败:', error);
+      tt.showToast({
+        title: '操作失败',
+        icon: 'error',
+        duration: 2000
+      });
     }
   }
 }); 

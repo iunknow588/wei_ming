@@ -114,12 +114,8 @@ App({
       logs.unshift(Date.now())
       tt.setStorageSync('logs', logs)
 
-      // 登录
-      tt.login({
-        success: res => {
-          // 发送 res.code 到后台换取 openId, sessionKey, unionId
-        }
-      });
+      // 移除自动登录调用，避免每次启动都弹出登录提示
+      // 用户需要登录时，会在具体页面中主动调用
       
       this.globalData.isInitialized = true;
     } catch (error) {

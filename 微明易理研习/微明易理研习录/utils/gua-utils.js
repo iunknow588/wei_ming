@@ -1,5 +1,18 @@
 // 卦象数据工具模块
-const { sixtyFourGuaData, getGuaData } = require('../data/sixtyFourGua.js');
+const { sixtyFourGuaData } = require('../data/sixtyFourGua.js');
+const { getGuaDetail } = require('../data/yaoIndex.js');
+
+// 64卦名称数组
+const GUA_NAMES = [
+  '乾', '坤', '屯', '蒙', '需', '讼', '师', '比',
+  '小畜', '履', '泰', '否', '同人', '大有', '谦', '豫',
+  '随', '蛊', '临', '观', '噬嗑', '贲', '剥', '复',
+  '无妄', '大畜', '颐', '大过', '坎', '离', '咸', '恒',
+  '遁', '大壮', '晋', '明夷', '家人', '睽', '蹇', '解',
+  '损', '益', '夬', '姤', '萃', '升', '困', '井',
+  '革', '鼎', '震', '艮', '渐', '归妹', '丰', '旅',
+  '巽', '兑', '涣', '节', '中孚', '小过', '既济', '未济'
+];
 
 /**
  * 获取卦辞和爻辞（带范围保护的版本）
@@ -8,7 +21,11 @@ const { sixtyFourGuaData, getGuaData } = require('../data/sixtyFourGua.js');
  */
 function getGuaContent(guaIndex) {
   guaIndex = guaIndex % 64;  // 确保合适范围
-  return getGuaData(guaIndex);
+  const gua = { ...sixtyFourGuaData[guaIndex] };
+  // 按需加载爻辞
+  const guaDetail = getGuaDetail(guaIndex);
+  gua.yaoCi = guaDetail && guaDetail.yao && Array.isArray(guaDetail.yao) ? guaDetail.yao.map(item => item.yao_text) : [];
+  return gua;
 }
 
 /**
@@ -48,7 +65,14 @@ function findGuaInfoByName(guaName) {
   
   // 查找对应的卦信息
   const guaInfo = findGuaName(fullYao);
-  return sixtyFourGuaData[guaInfo.index] || null;
+  if (guaInfo.index >= 0 && guaInfo.index < sixtyFourGuaData.length) {
+    const gua = { ...sixtyFourGuaData[guaInfo.index] };
+    // 按需加载爻辞
+    const guaDetail = getGuaDetail(guaInfo.index);
+    gua.yaoCi = guaDetail && guaDetail.yao && Array.isArray(guaDetail.yao) ? guaDetail.yao.map(item => item.yao_text) : [];
+    return gua;
+  }
+  return null;
 }
 
 /**
@@ -224,128 +248,182 @@ function validateAllGuaCodes(guaCodeMap) {
 
   // 检查索引是否正确
   const indexErrors = [];
-  for (const [code, info] of Object.entries(guaCodeMap)) {
-    if (info.index < 0 || info.index > 63) {
-      indexErrors.push({ code, index: info.index, name: info.name });
+  for (const [code, guaInfo] of Object.entries(guaCodeMap)) {
+    const expectedIndex = parseInt(code, 2);
+    if (guaInfo.index !== expectedIndex) {
+      indexErrors.push({
+        code,
+        expectedIndex,
+        actualIndex: guaInfo.index,
+        guaName: guaInfo.name
+      });
     }
   }
 
   return {
-    totalPossible: allPossibleCodes.length,
-    totalDefined: definedCodes.length,
-    missing: missingCodes,
-    duplicates: duplicates,
-    indexErrors: indexErrors
+    totalCodes: definedCodes.length,
+    missingCodes,
+    duplicates,
+    indexErrors,
+    isValid: missingCodes.length === 0 && duplicates.length === 0 && indexErrors.length === 0
   };
 }
 
 /**
- * 根据爻结果数组构建本卦
+ * 构建本卦信息
  * @param {Array} yaoResults - 爻结果数组
- * @returns {Array} 本卦数组（6个元素，1为阳爻，0为阴爻）
+ * @returns {Object} 本卦信息
  */
 function buildOriginalGua(yaoResults) {
-  return yaoResults.map(yao => {
-    if (yao.result && yao.result.value === 9) return 1; // 老阳
-    if (yao.result && yao.result.value === 6) return 0; // 老阴
-    if (yao.result && yao.result.value === 7) return 1; // 少阳
-    if (yao.result && yao.result.value === 8) return 0; // 少阴
-    return 0; // 默认值
+  const yaoArray = yaoResults.map(yao => {
+    if (!yao.result) return 0;
+    return yao.result.value === 9 || yao.result.value === 7 ? 1 : 0;
   });
+  
+  const guaInfo = findGuaName(yaoArray);
+  return {
+    name: guaInfo.name,
+    index: guaInfo.index,
+    yaoArray: yaoArray
+  };
 }
 
 /**
- * 根据爻结果数组构建变卦
+ * 构建变卦信息
  * @param {Array} yaoResults - 爻结果数组
- * @returns {Array} 变卦数组（6个元素，1为阳爻，0为阴爻）
+ * @returns {Object} 变卦信息
  */
 function buildChangedGua(yaoResults) {
-  return yaoResults.map(yao => {
-    if (yao.result && yao.result.value === 9) return 0; // 老阳变阴
-    if (yao.result && yao.result.value === 6) return 1; // 老阴变阳
-    if (yao.result && yao.result.value === 7) return 1; // 少阳不变
-    if (yao.result && yao.result.value === 8) return 0; // 少阴不变
-    return 0; // 默认值
+  const yaoArray = yaoResults.map(yao => {
+    if (!yao.result) return 0;
+    return yao.result.value === 9 || yao.result.value === 6 ? 1 : 0;
   });
+  
+  const guaInfo = findGuaName(yaoArray);
+  return {
+    name: guaInfo.name,
+    index: guaInfo.index,
+    yaoArray: yaoArray
+  };
 }
 
 /**
- * 从爻值数组生成完整的卦象结果数据
+ * 生成完整的卦象结果
  * @param {Array} yaoValues - 爻值数组（6个元素，值为6,7,8,9）
- * @returns {Object} 完整的卦象结果数据
+ * @returns {Object} 完整的卦象结果
  */
 function generateCompleteGuaResult(yaoValues) {
-  // 构建标准的yaoResults格式
+  // 构建爻结果数组
   const yaoResults = yaoValues.map((value, index) => {
     let type = '';
     let symbol = '';
     let desc = '';
     
-    if (value === 9) { type = 'laoyang'; symbol = 'O—'; desc = '老阳（变爻）'; }
-    else if (value === 6) { type = 'laoyin'; symbol = 'X--'; desc = '老阴（变爻）'; }
-    else if (value === 7) { type = 'shao-yang'; symbol = '—'; desc = '少阳'; }
-    else if (value === 8) { type = 'shao-yin'; symbol = '--'; desc = '少阴'; }
+    if (value === 9) { 
+      type = 'laoyang'; 
+      symbol = '○'; 
+      desc = '老阳（变爻）';
+    }
+    else if (value === 7) { 
+      type = 'yang'; 
+      symbol = '—'; 
+      desc = '少阳（不变）';
+    }
+    else if (value === 8) { 
+      type = 'yin'; 
+      symbol = '--'; 
+      desc = '少阴（不变）';
+    }
+    else if (value === 6) { 
+      type = 'laoyin'; 
+      symbol = '×'; 
+      desc = '老阴（变爻）';
+    }
     
     return {
+      index: index,
+      number: index + 1,
       isEmpty: false,
-      number: 6 - index,
-      result: {
-        value,
-        type,
-        symbol,
-        desc,
-        coinFaces: [],
-        coinStatusText: ''
+      result: { 
+        value: value,
+        type: type,
+        symbol: symbol,
+        desc: desc
       }
     };
   });
 
   // 构建本卦和变卦
-  const originalGua = buildOriginalGua(yaoResults);
-  const changedGua = buildChangedGua(yaoResults);
-  
-  // 构建变爻数组
-  const bian = yaoValues.map(value => value === 6 || value === 9);
-  
-  // 查找卦名
-  const originalGuaInfo = findGuaName(originalGua);
-  const changedGuaInfo = findGuaName(changedGua);
-  
-  // 获取卦辞和爻辞
-  const originalGuaContent = getGuaData(originalGuaInfo.index);
-  const changedGuaContent = getGuaData(changedGuaInfo.index);
-  
+  const originalGuaInfo = buildOriginalGua(yaoResults);
+  const changedGuaInfo = buildChangedGua(yaoResults);
+
+  // 获取卦象内容
+  const originalGuaContent = getGuaContent(originalGuaInfo.index);
+  const changedGuaContent = getGuaContent(changedGuaInfo.index);
+
   // 分析解读方法
   const interpretationMethod = analyzeInterpretationMethod(yaoResults, originalGuaInfo.name, changedGuaInfo.name);
-  
-  // 构建详情数据
+
+  // 构建变爻信息
+  const bian = yaoResults.map(yao => yao.result && (yao.result.value === 9 || yao.result.value === 6));
+
+  // 构建本卦详细显示信息
   const originalGuaDetail = yaoResults.map(yao => {
     if (!yao.result) return { type: '', symbol: '', isBian: false };
-    let isBian = yao.result.value === 6 || yao.result.value === 9;
-    return {
-      type: yao.result.type,
-      symbol: yao.result.symbol,
-      isBian,
-      value: yao.result.value
-    };
+    let isBian = yao.result.value === 9 || yao.result.value === 6;
+    let value = yao.result.value;
+    let type = '';
+    let symbol = '';
+    if (value === 9) { 
+      type = 'laoyang'; 
+      symbol = '○ —'; // 老阳：变爻符号 + 阳爻符号
+    }
+    else if (value === 7) { 
+      type = 'yang'; 
+      symbol = '—'; // 少阳：阳爻符号
+    }
+    else if (value === 8) { 
+      type = 'yin'; 
+      symbol = '--'; // 少阴：阴爻符号
+    }
+    else if (value === 6) { 
+      type = 'laoyin'; 
+      symbol = '× --'; // 老阴：变爻符号 + 阴爻符号
+    }
+    return { type, symbol, isBian, value };
   });
-  
+
+  // 构建变卦详细显示信息
   const changedGuaDetail = yaoResults.map(yao => {
     if (!yao.result) return { type: '', symbol: '', isBian: false };
     let isBian = yao.result.value === 6 || yao.result.value === 9;
     let value = yao.result.value;
     let type = '';
     let symbol = '';
-    // 变卦变爻只高亮，不用特殊符号
-    if (value === 9 || value === 8) { type = 'shao-yin'; symbol = '--'; }
-    else if (value === 6 || value === 7) { type = 'shao-yang'; symbol = '—'; }
+    // 变卦中只显示变化后的爻符号，变爻用高亮样式标识
+    if (value === 9) { 
+      type = 'yin'; 
+      symbol = '--'; // 老阳变少阴：只显示阴爻符号
+    }
+    else if (value === 7) { 
+      type = 'yang'; 
+      symbol = '—'; // 少阳：阳爻符号
+    }
+    else if (value === 8) { 
+      type = 'yin'; 
+      symbol = '--'; // 少阴：阴爻符号
+    }
+    else if (value === 6) { 
+      type = 'yang'; 
+      symbol = '—'; // 老阴变少阳：只显示阳爻符号
+    }
     return { type, symbol, isBian, value };
   });
 
   return {
     yaoResults,
-    originalGua,
-    changedGua,
+    originalGua: originalGuaInfo,
+    changedGua: changedGuaInfo,
     bian,
     originalGuaName: originalGuaInfo.name,
     changedGuaName: changedGuaInfo.name,
@@ -463,13 +541,39 @@ function deleteGuaHistoryRecord(key) {
   });
 }
 
+/**
+ * 获取卦象的完整信息（包括爻辞）
+ * @param {Object} guaInfo - 基础卦象信息
+ * @returns {Object} 包含爻辞的完整卦象信息
+ */
+function getGuaWithYaoCi(guaInfo) {
+  if (!guaInfo || typeof guaInfo.index === 'undefined') {
+    console.error('Invalid gua info:', guaInfo);
+    return guaInfo;
+  }
+
+  const gua = { ...guaInfo };
+  
+  // 获取卦象详细数据
+  const guaDetail = getGuaDetail(guaInfo.index);
+  if (guaDetail && guaDetail.yao && Array.isArray(guaDetail.yao)) {
+    gua.yaoCi = guaDetail.yao.map(item => item.yao_text);
+  } else {
+    gua.yaoCi = [];
+  }
+
+  return gua;
+}
+
 module.exports = {
+  // 64卦名称数组
+  GUA_NAMES,
+  
   // 直接导出 sixtFourGua.js 中的方法，避免不必要的封装
-  getGuaData,
+  getGuaContent,
   sixtyFourGuaData,
   
   // 保留有价值的封装
-  getGuaContent,
   findGuaName,
   findGuaInfoByName,
   baguaNameToNumber,
@@ -483,5 +587,6 @@ module.exports = {
   generateCompleteGuaResult,
   saveGuaHistoryRecord,
   getGuaHistoryRecords,
-  deleteGuaHistoryRecord
+  deleteGuaHistoryRecord,
+  getGuaWithYaoCi
 }; 

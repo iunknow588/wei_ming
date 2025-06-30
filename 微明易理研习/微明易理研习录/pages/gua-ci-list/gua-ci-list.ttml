@@ -16,59 +16,39 @@
   <!-- 64卦列表 -->
   <view class="gua-list" tt:if="{{!isLoading}}">
     <view class="list-title">六十四卦</view>
+    
     <view class="gua-list-container">
       <view 
-        class="gua-item {{item.completed ? 'gua-completed' : 'gua-incomplete'}}" 
+        class="gua-item {{learningStatus[item] ? 'gua-completed' : 'gua-incomplete'}}" 
         tt:for="{{guaList}}" 
         tt:key="index"
         bindtap="onGuaTap"
         data-index="{{index}}"
       >
+        <!-- 学习状态指示器 -->
+        <view class="learning-status {{learningStatus[item] ? 'completed' : 'incomplete'}}">
+          <text tt:if="{{learningStatus[item]}}">✓</text>
+          <text tt:else>○</text>
+        </view>
+        
         <!-- 左侧圆形缩略图 -->
         <view class="gua-thumbnail">
-          <!-- 图片加载占位符 -->
-          <view class="gua-image-placeholder" tt:if="{{!item.imageLoaded}}"></view>
-          <!-- 实际图片 -->
-          <image 
-            tt:if="{{!item.imageError}}"
-            id="gua-image-{{index}}"
-            src="{{item.image}}" 
-            class="gua-image {{item.imageLoaded ? 'image-loaded' : ''}}" 
-            mode="aspectFill"
-            bindload="onImageLoad"
-            binderror="onImageError"
-            data-index="{{index}}"
-            lazy-load="true"
-          />
-          <!-- 图片加载失败时的默认显示 -->
-          <view class="gua-image-fallback" tt:if="{{item.imageError}}"></view>
-          
           <view class="gua-name-overlay">
             <!-- 根据字数显示不同布局 -->
-            <view tt:if="{{item.guaName.length === 1}}" class="single-char">{{item.guaName}}</view>
-            <view tt:elif="{{item.guaName.length === 2}}" class="double-char">
-              <text class="char-left">{{item.guaName[0]}}</text>
-              <text class="char-right">{{item.guaName[1]}}</text>
+            <view tt:if="{{globalGuaData[item].guaName.length === 1}}" class="single-char">{{globalGuaData[item].guaName}}</view>
+            <view tt:elif="{{globalGuaData[item].guaName.length === 2}}" class="double-char">
+              <text class="char-left">{{globalGuaData[item].guaName[0]}}</text>
+              <text class="char-right">{{globalGuaData[item].guaName[1]}}</text>
             </view>
           </view>
         </view>
         
         <!-- 右侧信息 -->
         <view class="gua-info">
-          <view class="gua-symbol">{{item.guaCi}}</view>
-          <view class="gua-desc">{{item.explanation}}</view>
+          <view class="gua-symbol">{{globalGuaData[item].guaCi}}</view>
+          <view class="gua-desc">{{globalGuaData[item].explanation}}</view>
         </view>
       </view>
-    </view>
-    
-    <!-- 加载更多提示 -->
-    <view class="load-more" tt:if="{{hasMore}}">
-      <view class="load-more-text">上拉加载更多</view>
-    </view>
-    
-    <!-- 全部加载完成提示 -->
-    <view class="load-complete" tt:if="{{!hasMore && guaList.length > 0}}">
-      <view class="load-complete-text">已显示全部卦象</view>
     </view>
   </view>
 </view>

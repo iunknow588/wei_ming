@@ -87,53 +87,6 @@
   margin-left: 0;
 }
 
-.gua-symbol-canvas {
-  width: 100rpx;
-  height: 160rpx;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 16rpx;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  border: 2rpx solid rgba(255, 255, 255, 0.3);
-}
-
-.gua-symbol-svg {
-  width: 100rpx;
-  height: 160rpx;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 16rpx;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  border: 2rpx solid rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-}
-
-.gua-symbol-css {
-  width: 100rpx;
-  height: 160rpx;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16rpx;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  border: 2rpx solid rgba(255, 255, 255, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: 12rpx;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-  margin: 0 auto;
-}
-
-.gua-symbol-css:active {
-  transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
-
 .gua-symbol-new {
   width: 140rpx;
   height: 180rpx;
@@ -283,13 +236,107 @@
 .yao-list {
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
+  gap: 24rpx;
   margin-top: 8rpx;
   width: 100%;
   box-sizing: border-box;
 }
 
 .yao-item {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 12rpx;
+  padding: 20rpx;
+  border-left: 4rpx solid #667eea;
+  width: 100%;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 爻辞文本样式 */
+.yao-text-container {
+  margin-bottom: 16rpx;
+}
+
+.yao-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.6;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 爻注样式 */
+.yao-comment-container {
+  margin-bottom: 16rpx;
+  padding: 12rpx;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8rpx;
+}
+
+.yao-comment {
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.6;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 故事名称样式 */
+.story-name-container {
+  margin-bottom: 12rpx;
+}
+
+.story-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #667eea;
+  line-height: 1.4;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 故事概述样式 */
+.story-overview-container {
+  margin-bottom: 16rpx;
+  padding: 12rpx;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 8rpx;
+}
+
+.story-overview {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.7;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 启示样式 */
+.inspiration-container {
+  padding: 12rpx;
+  background: rgba(255, 193, 7, 0.1);
+  border-radius: 8rpx;
+  border-left: 3rpx solid #ffc107;
+}
+
+.inspiration {
+  font-size: 28rpx;
+  color: #8b4513;
+  line-height: 1.6;
+  font-style: italic;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 简单爻辞显示样式（备用） */
+.yao-item-simple {
   font-size: 28rpx;
   color: #666;
   line-height: 1.6;
@@ -349,6 +396,14 @@
     font-size: 18rpx;
     width: 20rpx;
   }
+  
+  .yao-text {
+    font-size: 28rpx;
+  }
+  
+  .yao-comment, .story-name, .story-overview, .inspiration {
+    font-size: 26rpx;
+  }
 }
 
 /* 超小屏幕适配 */
@@ -393,5 +448,190 @@
   .bagua-name {
     font-size: 16rpx;
     width: 18rpx;
+  }
+  
+  .yao-text {
+    font-size: 26rpx;
+  }
+  
+  .yao-comment, .story-name, .story-overview, .inspiration {
+    font-size: 24rpx;
+  }
+}
+
+/* 学习状态区域样式 */
+.study-status-section {
+  width: 100%;
+  padding: 40rpx 32rpx;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-top: 1rpx solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2;
+}
+
+.study-status-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12rpx;
+  width: 100%;
+  max-width: 600rpx;
+  margin: 0 auto;
+}
+
+.study-status-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12rpx;
+  flex: 1;
+}
+
+.study-status-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  line-height: 1.4;
+  width: 80rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.study-status-text.completed {
+  color: #e74c3c;
+}
+
+.study-status-text.not-completed {
+  color: #3498db;
+}
+
+.study-status-icon {
+  font-size: 36rpx;
+  line-height: 1;
+  width: 40rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.study-status-icon.completed-icon {
+  color: #e74c3c;
+}
+
+.study-status-icon.not-completed-icon {
+  color: #3498db;
+}
+
+.study-status-button {
+  padding: 16rpx 24rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 160rpx;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.study-status-button.complete-button {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: #fff;
+}
+
+.study-status-button.complete-button:active {
+  background: linear-gradient(135deg, #2980b9, #1f5f8b);
+  transform: translateY(2rpx);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.study-status-button.reset-button {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: #fff;
+}
+
+.study-status-button.reset-button:active {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  transform: translateY(2rpx);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 登录按钮样式 */
+.login-button {
+  padding: 16rpx 24rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120rpx;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: #fff;
+}
+
+.login-button:active {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  transform: translateY(2rpx);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 学习状态区域响应式适配 */
+@media screen and (max-width: 750rpx) {
+  .study-status-section {
+    padding: 32rpx 24rpx;
+  }
+  
+  .study-status-container {
+    gap: 10rpx;
+  }
+  
+  .study-status-text {
+    font-size: 28rpx;
+  }
+  
+  .study-status-icon {
+    font-size: 32rpx;
+  }
+  
+  .study-status-button {
+    padding: 14rpx 20rpx;
+    font-size: 26rpx;
+    min-width: 140rpx;
+  }
+}
+
+@media screen and (max-width: 600rpx) {
+  .study-status-section {
+    padding: 24rpx 20rpx;
+  }
+  
+  .study-status-container {
+    flex-direction: column;
+    gap: 16rpx;
+    align-items: stretch;
+  }
+  
+  .study-status-info {
+    justify-content: center;
+  }
+  
+  .study-status-text {
+    font-size: 26rpx;
+  }
+  
+  .study-status-icon {
+    font-size: 30rpx;
+  }
+  
+  .study-status-button {
+    padding: 12rpx 18rpx;
+    font-size: 24rpx;
+    min-width: 120rpx;
   }
 } 

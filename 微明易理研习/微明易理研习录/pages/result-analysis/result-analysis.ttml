@@ -23,9 +23,6 @@
         <view class="yao-symbol empty" tt:if="{{item.isEmpty}}">—</view>
         <view class="yao-desc" tt:if="{{!item.isEmpty}}">{{item.result.desc}}</view>
         <view class="yao-desc empty" tt:if="{{item.isEmpty}}">待摇卦</view>
-        <view class="coin-status" tt:if="{{!item.isEmpty && item.result.coinStatusText}}">
-          <text class="coin-status-text">[{{item.result.coinStatusText}}]</text>
-        </view>
       </view>
       <view class="yao-progress" tt:if="{{currentRound < totalRounds}}">
         <view class="progress-text">进度: {{currentRound}}/{{totalRounds}}</view>

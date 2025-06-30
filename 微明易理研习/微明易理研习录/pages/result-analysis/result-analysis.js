@@ -23,6 +23,13 @@ Page({
 
   // 统一处理结果数据的方法
   processResultData(resultData) {
+    console.log('处理结果数据:', resultData);
+    console.log('yaoResults:', resultData.yaoResults);
+    console.log('originalGuaName:', resultData.originalGuaName);
+    console.log('changedGuaName:', resultData.changedGuaName);
+    console.log('originalGuaInfo:', resultData.originalGuaInfo);
+    console.log('changedGuaInfo:', resultData.changedGuaInfo);
+    
     this.setData({
       ...resultData,
       currentRound: 6,
@@ -49,9 +56,13 @@ Page({
       if (options.yaoValues) {
         const yaoValues = JSON.parse(decodeURIComponent(options.yaoValues));
         console.log('从爻值数组生成结果:', yaoValues);
+        console.log('爻值数组类型:', typeof yaoValues, Array.isArray(yaoValues));
+        console.log('爻值数组长度:', yaoValues.length);
         
         if (Array.isArray(yaoValues) && yaoValues.length === 6) {
+          console.log('开始生成完整卦象结果...');
           const resultData = generateCompleteGuaResult(yaoValues);
+          console.log('生成的结果数据:', resultData);
           this.processResultData(resultData);
           return;
         }

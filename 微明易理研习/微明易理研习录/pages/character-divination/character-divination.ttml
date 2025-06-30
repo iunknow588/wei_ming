@@ -79,12 +79,6 @@
           <text class="char-strokes">笔画：{{strokesA}}</text>
         </view>
       </view>
-      
-      <!-- 调试信息：静态显示前10个汉字 -->
-      <view class="debug-info" tt:if="{{availableChars.length > 0}}">
-        <text class="debug-text">调试：前10个汉字 - {{availableChars.slice(0, 10).join(' ')}}</text>
-        <text class="debug-text">动画时间：第一个{{marqueeSpeedA}}秒，第二个{{marqueeSpeedB}}秒</text>
-      </view>
     </view>
 
     <!-- 第二个汉字选择 -->

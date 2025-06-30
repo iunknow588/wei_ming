@@ -122,7 +122,10 @@ Page({
 
   // 生成基于时间的随机数
   generateTimeBasedRandom() {
-    return Math.floor(Math.random() * 8);
+    // 生成0~887的随机整数
+    const random = Math.floor(Math.random() * 888);
+    // 返回对8取模的结果
+    return random % 8;
   },
 
   // 根据随机数确定铜钱正反面
@@ -174,7 +177,7 @@ Page({
     this.setData({ coins });
 
     // 使用时间随机数切换铜钱正反面
-    const spinInterval = setInterval(() => {
+    this.spinInterval = setInterval(() => {
       const randomNumber = this.generateTimeBasedRandom();
       const coinFaces = this.determineCoinFaces(randomNumber, true); // 动画状态，不输出日志
       
@@ -188,7 +191,8 @@ Page({
 
     // 3秒后停止旋转并确定结果
     setTimeout(() => {
-      clearInterval(spinInterval);
+      clearInterval(this.spinInterval);
+      this.spinInterval = null;
       
       // 最后一次使用时间随机数确定最终结果
       const finalRandomNumber = this.generateTimeBasedRandom();
@@ -555,6 +559,14 @@ Page({
     this.setData({
       showDisclaimer: false
     });
+  },
+
+  onUnload() {
+    // 清理定时器，避免内存泄漏
+    if (this.spinInterval) {
+      clearInterval(this.spinInterval);
+      this.spinInterval = null;
+    }
   }
 
 }); 

@@ -109,6 +109,42 @@
   font-family: "SimSun", "宋体", serif;
 }
 
+/* 测试按钮样式 */
+.test-button {
+  background: #ff5722;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.test-button:active {
+  background: #d84315;
+}
+
+/* 刷新按钮样式 */
+.refresh-button {
+  background: #4caf50;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.refresh-button:active {
+  background: #388e3c;
+}
+
 .gua-list-container {
   display: flex;
   flex-direction: column;
@@ -133,9 +169,10 @@
   max-width: 100%;
 }
 
-/* 已完成状态 - 简化渐变 */
+/* 已完成状态 - 蓝色主题 */
 .gua-completed {
-  background: #e3f2fd;
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border: 2px solid #2196f3;
 }
 
 .gua-completed .gua-symbol {
@@ -144,7 +181,7 @@
 }
 
 .gua-completed .gua-desc {
-  color: #212121;
+  color: #1976d2;
   font-weight: 600;
 }
 
@@ -153,24 +190,25 @@
   font-weight: bold;
 }
 
-/* 未完成状态 - 简化渐变 */
+/* 未完成状态 - 紫色主题 */
 .gua-incomplete {
-  background: #f3e5f5;
+  background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+  border: 2px solid #9c27b0;
 }
 
 .gua-incomplete .gua-symbol {
-  color: #424242;
+  color: #6a1b9a;
   font-weight: 600;
 }
 
 .gua-incomplete .gua-desc {
-  color: #616161;
+  color: #7b1fa2;
   line-height: 1.4;
   font-weight: 500;
 }
 
 .gua-incomplete .gua-name-overlay {
-  color: #424242;
+  color: #6a1b9a;
   font-weight: bold;
 }
 
@@ -383,4 +421,32 @@
 .logo {
   width: 100%;
   height: 100%;
+}
+
+/* 学习状态指示器 */
+.learning-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.learning-status.completed {
+  background: #4caf50;
+  color: white;
+  border: 2px solid #2e7d32;
+}
+
+.learning-status.incomplete {
+  background: #ff9800;
+  color: white;
+  border: 2px solid #e65100;
 } 

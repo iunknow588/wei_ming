@@ -4,5 +4,11 @@
         "autoCompile": true,
         "mockLogin": true,
         "autoPush": true
+    },
+    "condition": {
+        "miniprogram": {
+            "current": -1,
+            "list": []
+        }
     }
 }
