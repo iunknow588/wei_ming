@@ -30,6 +30,7 @@ Page({
     console.log('originalGuaInfo:', resultData.originalGuaInfo);
     console.log('changedGuaInfo:', resultData.changedGuaInfo);
     
+    // 保持顺序与详情页一致（自下而上，无需reverse）
     this.setData({
       ...resultData,
       currentRound: 6,

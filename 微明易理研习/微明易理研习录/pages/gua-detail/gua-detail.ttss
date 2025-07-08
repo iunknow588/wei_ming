@@ -77,6 +77,7 @@
 
 .gua-symbol-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 140rpx;
@@ -85,53 +86,63 @@
   flex-shrink: 0;
   flex: 0 0 140rpx;
   margin-left: 0;
-}
-
-.gua-symbol-new {
-  width: 140rpx;
-  height: 180rpx;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 16rpx;
   box-shadow: 0 4px 16px rgba(0,0,0,0.2);
   border: 2rpx solid rgba(255, 255, 255, 0.3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
   padding: 15rpx;
   box-sizing: border-box;
   transition: all 0.3s ease;
-  margin: 0 auto;
 }
 
-.gua-symbol-new:active {
+.gua-symbol-container:active {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
-
-.upper-trigram, .lower-trigram {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  width: 100%;
-  gap: 8rpx;
 }
 
 .trigram-lines {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 3rpx;
+  gap: 8rpx;
   flex: 1;
+  /* 确保从下往上显示六爻 */
+  flex-direction: column-reverse;
 }
 
 .trigram-line {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 10rpx;
-  gap: 2rpx;
+  height: 20rpx;
+  gap: 8rpx;
+}
+
+.gua-name-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10rpx;
+  gap: 4rpx;
+}
+
+.gua-name {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  line-height: 1;
+}
+
+.gua-description {
+  font-size: 16rpx;
+  color: #666;
+  text-align: center;
+  line-height: 1;
+  max-width: 120rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .middle-gap {
@@ -168,7 +179,7 @@
 }
 
 .line-segment {
-  height: 6rpx;
+  height: 12rpx;
   background: #333;
   border-radius: 3rpx;
   box-shadow: 0 1px 2px rgba(0,0,0,0.2);
@@ -634,4 +645,12 @@
     font-size: 24rpx;
     min-width: 120rpx;
   }
+}
+
+.trigram-gap {
+  height: 12rpx;
+  width: 100%;
+  margin: 4rpx 0;
+  background: transparent;
+  display: block;
 } 

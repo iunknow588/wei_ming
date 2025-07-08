@@ -2,19 +2,36 @@
 const app = getApp();
 // 导入授权管理器
 const authManager = require('../../utils/auth.js');
+// 导入版本管理工具
+const { getAppVersion } = require('../../utils/version-manager.js');
 
 Page({
   data: {
     user: null,
     isAuthorizing: false,
+    version: '0.1.0' // 默认版本号
   },
 
   onLoad(options) {
     this.syncUserInfo();
+    this.loadAppVersion();
   },
 
   onShow() {
     this.syncUserInfo();
+  },
+
+  // 加载应用版本号
+  loadAppVersion() {
+    try {
+      const version = getAppVersion();
+      this.setData({
+        version: version
+      });
+    } catch (error) {
+      console.error('加载版本号失败:', error);
+      // 保持默认版本号
+    }
   },
 
   syncUserInfo() {

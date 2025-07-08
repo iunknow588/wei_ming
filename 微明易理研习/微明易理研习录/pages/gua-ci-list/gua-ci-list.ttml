@@ -17,13 +17,26 @@
   <view class="gua-list" tt:if="{{!isLoading}}">
     <view class="list-title">六十四卦</view>
     
+    <!-- TAB标签栏 -->
+    <view class="tab-bar">
+      <view 
+        class="tab-item {{currentTab === index ? 'active' : ''}}" 
+        tt:for="{{tabList}}" 
+        tt:key="index"
+        bindtap="onTabChange"
+        data-index="{{index}}"
+      >
+        {{item}}
+      </view>
+    </view>
+
     <view class="gua-list-container">
       <view 
         class="gua-item {{learningStatus[item] ? 'gua-completed' : 'gua-incomplete'}}" 
-        tt:for="{{guaList}}" 
+        tt:for="{{tabGuaList[currentTab]}}" 
         tt:key="index"
         bindtap="onGuaTap"
-        data-index="{{index}}"
+        data-index="{{item}}"
       >
         <!-- 学习状态指示器 -->
         <view class="learning-status {{learningStatus[item] ? 'completed' : 'incomplete'}}">

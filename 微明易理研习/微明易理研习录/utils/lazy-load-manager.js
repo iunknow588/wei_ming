@@ -11,6 +11,7 @@ class LazyLoadManager {
     this.isIdle = false; // 是否处于空闲状态
     this.maxConcurrent = 3; // 最大并发加载数
     this.currentLoading = 0; // 当前正在加载的数量
+    this.idleTimer = null; // 定时器ID
     
     // 初始化空闲检测
     this.initIdleDetection();
@@ -30,7 +31,7 @@ class LazyLoadManager {
     });
 
     // 定期检查空闲状态
-    setInterval(() => {
+    this.idleTimer = setInterval(() => {
       this.checkIdleStatus();
     }, 5000); // 每5秒检查一次
   }
@@ -166,6 +167,10 @@ class LazyLoadManager {
         reject(error);
       } finally {
         this.loadingPromises.delete(guaIndex);
+        // 检查是否全部加载完成，若是则关闭定时器
+        if (this.loadedData.size >= 64) {
+          this.clearIdleTimer();
+        }
       }
     });
 
@@ -261,6 +266,17 @@ class LazyLoadManager {
    */
   preloadLikelyGua(likelyIndexes, priority = 7) {
     this.addBatchPreloadTasks(likelyIndexes, priority);
+  }
+
+  /**
+   * 清除空闲检测定时器
+   */
+  clearIdleTimer() {
+    if (this.idleTimer) {
+      clearInterval(this.idleTimer);
+      this.idleTimer = null;
+      console.log('[LazyLoadManager] 已关闭空闲检测定时器');
+    }
   }
 }
 

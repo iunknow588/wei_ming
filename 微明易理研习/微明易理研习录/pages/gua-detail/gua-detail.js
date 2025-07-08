@@ -10,8 +10,8 @@ const { getGuaComponents } = require('../../utils/gua-drawer.js');
 const { getGuaDetail } = require('../../data/yaoIndex.js');
 // 导入延时加载管理器
 const { lazyLoadManager } = require('../../utils/lazy-load-manager.js');
-// 导入64卦名称数组
-const { GUA_NAMES } = require('../../utils/gua-utils.js');
+// 导入新版卦象工具
+const { getGuaNameByIndex, getGuaYaoArrayByIndex, getGuaComponent, baguaNames, guaLines } = require('../../utils/gua-utils.js');
 
 Page({
   data: {
@@ -65,9 +65,8 @@ Page({
 
   // 设置导航栏标题
   setNavigationBarTitle() {
-    const guaName = GUA_NAMES[this.guaIndex - 1] || '未知';
+    const guaName = sixtyFourGuaData[this.guaIndex - 1]?.guaName || `第${this.guaIndex}卦`;
     const title = `第${this.guaIndex}卦：${guaName}卦`;
-    
     tt.setNavigationBarTitle({
       title: title
     });
@@ -131,62 +130,43 @@ Page({
     }
 
     // 设置卦象组件
-    this.setGuaComponents(guaData);
+    this.setGuaComponents();
     
-    // 获取简化的卦名
-    const simpleGuaName = GUA_NAMES[this.guaIndex - 1] || `第${this.guaIndex}卦`;
+    // 获取权威卦名
+    const guaName = sixtyFourGuaData[this.guaIndex - 1]?.guaName || `第${this.guaIndex}卦`;
     
     return {
-      guaName: guaData.gua_name || `第${this.guaIndex}卦`,
-      simpleGuaName: simpleGuaName, // 添加简化的卦名
+      guaName: guaName,
+      simpleGuaName: guaName, // 简化卦名直接用权威卦名
       guaCi: guaData.gua_ci || '',
       guaJie: guaData.gua_jie || '',
       yao: guaData.yao || [],
       yaoCi: guaData.yao_ci || [],
-      image: guaData.image || '',
       ...guaData
     };
   },
 
-  // 设置卦象组件
-  setGuaComponents(guaData) {
+  // 设置卦象组件（新版工具函数实现）
+  setGuaComponents() {
     try {
-      // 根据卦索引生成正确的卦象组件
-      const guaIndex = this.guaIndex - 1; // 转换为0-63的索引
-      
-      // 使用app.js中的GUA_CODE_MAP来获取卦象信息
-      const guaCodeMap = app.globalData.guaCodeMap;
-      
-      // 找到对应的卦象编码
-      let guaCode = null;
-      for (const [code, info] of Object.entries(guaCodeMap)) {
-        if (info.index === guaIndex) {
-          guaCode = code;
-          break;
-        }
-      }
-      
-      if (guaCode) {
-        // 将6位二进制码转换为上下卦
-        const upperCode = guaCode.substring(0, 3);
-        const lowerCode = guaCode.substring(3, 6);
-        
-        // 将二进制码转换为爻数组
-        const upperLines = upperCode.split('').map(bit => parseInt(bit));
-        const lowerLines = lowerCode.split('').map(bit => parseInt(bit));
-        
-        // 根据爻数组确定八卦名称
-        const baguaNames = ['坤', '艮', '坎', '巽', '震', '离', '兑', '乾'];
-        const upperBagua = this.getBaguaName(upperLines);
-        const lowerBagua = this.getBaguaName(lowerLines);
-        
+      const guaIndex = this.guaIndex - 1; // 0-63
+      const comp = getGuaComponent(guaIndex);
+      if (comp) {
+        const lowerLines = guaLines[comp.lower];
+        const upperLines = guaLines[comp.upper];
+        const sixLines = [...lowerLines, ...upperLines];
+        // reverse后自下而上渲染
+        const lowerThreeLines = [...lowerLines].reverse();
+        const upperThreeLines = [...upperLines].reverse();
         const guaComponents = {
-          upper: upperBagua,
-          lower: lowerBagua,
-          upperLines: upperLines,
-          lowerLines: lowerLines
+          upper: baguaNames[comp.upper],
+          lower: baguaNames[comp.lower],
+          upperLines,
+          lowerLines,
+          sixLines,
+          lowerThreeLines,
+          upperThreeLines
         };
-        
         this.setData({ guaComponents });
       } else {
         // 如果找不到对应的卦象，使用默认值
@@ -194,9 +174,11 @@ Page({
           upper: '乾',
           lower: '坤',
           upperLines: [1, 1, 1],
-          lowerLines: [0, 0, 0]
+          lowerLines: [0, 0, 0],
+          sixLines: [0, 0, 0, 1, 1, 1],
+          lowerThreeLines: [0, 0, 0].reverse(),
+          upperThreeLines: [1, 1, 1].reverse()
         };
-        
         this.setData({ guaComponents });
       }
     } catch (error) {
@@ -207,28 +189,14 @@ Page({
         upper: '乾',
         lower: '坤',
         upperLines: [1, 1, 1],
-        lowerLines: [0, 0, 0]
+        lowerLines: [0, 0, 0],
+        sixLines: [0, 0, 0, 1, 1, 1],
+        lowerThreeLines: [0, 0, 0].reverse(),
+        upperThreeLines: [1, 1, 1].reverse()
       };
       
       this.setData({ guaComponents });
     }
-  },
-
-  // 根据爻数组获取八卦名称
-  getBaguaName(lines) {
-    const baguaMap = {
-      '000': '坤',
-      '001': '艮', 
-      '010': '坎',
-      '011': '巽',
-      '100': '震',
-      '101': '离',
-      '110': '兑',
-      '111': '乾'
-    };
-    
-    const code = lines.join('');
-    return baguaMap[code] || '乾';
   },
 
   // 图片加载完成
@@ -248,7 +216,7 @@ Page({
   },
 
   onShareAppMessage() {
-    const guaName = GUA_NAMES[this.guaIndex - 1] || '未知';
+    const guaName = sixtyFourGuaData[this.guaIndex - 1]?.guaName || '未知';
     
     return {
       title: `第${this.guaIndex}卦：${guaName}卦详解`,

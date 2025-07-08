@@ -60,6 +60,6 @@
   <!-- 应用信息 -->
   <view class="app-info">
     <text class="app-name">微明易理研习录</text>
-    <text class="app-version">版本 1.0.0</text>
+    <text class="app-version">版本 {{version}}</text>
   </view>
 </view> 

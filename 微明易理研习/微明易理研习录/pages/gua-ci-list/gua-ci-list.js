@@ -5,14 +5,19 @@ const { GUA_NAMES } = require('../../utils/gua-utils.js');
 // 导入学习进度管理模块
 const { getStudyProgress, getCompletedGuaIndexes } = require('../../utils/study-progress-manager.js');
 
+// 全局缓存，确保TAB分组只计算一次
+let cachedTabGuaList = null;
+
 Page({
   data: {
     guaList: [], // 64卦索引列表
     isLoading: true, // 加载状态
     isDataReady: false, // 数据是否准备就绪
-    // 移除分页相关字段
     globalGuaData: null, // 全局64卦数据引用
-    learningStatus: {} // 学习状态映射 {index: boolean}
+    learningStatus: {}, // 学习状态映射 {index: boolean}
+    tabList: ['乾','坎','艮','震','巽','离','坤','兑'], // TAB标签
+    currentTab: 0, // 当前选中TAB索引
+    tabGuaList: null // 每个TAB下的8个卦索引，初始化时一次性设置
   },
 
   onLoad(options) {
@@ -43,45 +48,61 @@ Page({
 
   onUnload() {
     // 页面卸载时清理资源
-    this.clearTimers();
-  },
-
-  // 清理定时器
-  clearTimers() {
-    if (this.updateTimer) {
-      clearInterval(this.updateTimer);
-      this.updateTimer = null;
-    }
+    // 已无定时器，无需清理
   },
 
   // 加载64卦数据
   loadGuaData() {
     try {
-      // 直接使用全局的64卦数据
-      const { sixtyFourGuaData } = require('../../data/sixtyFourGua.js');
-      
-      if (!sixtyFourGuaData || !Array.isArray(sixtyFourGuaData)) {
-        throw new Error('64卦数据加载失败，程序无法正常运行');
+      // 检查是否已经缓存了TAB分组
+      if (cachedTabGuaList) {
+        console.log('[gua-ci-list] 使用缓存TAB分组，跳过重新计算');
+        this.setData({ 
+          guaList: Array.from({length: app.globalData.sixtyFourGua.length}, (_, index) => index),
+          isLoading: false,
+          isDataReady: true,
+          globalGuaData: app.globalData.sixtyFourGua,
+          learningStatus: {},
+          tabGuaList: cachedTabGuaList
+        });
+        this.checkUserLearningStatus();
+        return;
       }
       
-      // 直接使用全局数据，不克隆
-      const globalGuaData = sixtyFourGuaData;
+      // 首次加载数据 - 直接使用全局数据
+      console.log('[gua-ci-list] 首次计算TAB分组');
       
-      // 直接加载所有64卦索引
-      const allGuaIndexes = Array.from({length: globalGuaData.length}, (_, index) => index);
+      // 如果全局数据还未初始化，则等待初始化完成
+      if (!app.globalData.sixtyFourGua || app.globalData.sixtyFourGua.length === 0) {
+        console.log('[gua-ci-list] 全局数据未初始化，等待初始化完成...');
+        setTimeout(() => {
+          this.loadGuaData();
+        }, 100);
+        return;
+      }
       
-      // 批量更新数据
+      // 按用户指定分组设置tabGuaList（索引减1）
+      cachedTabGuaList = [
+        [0, 43, 32, 11, 19, 22, 34, 13],      // 乾
+        [28, 59, 2, 62, 48, 54, 35, 6],       // 坎
+        [51, 21, 25, 40, 37, 9, 60, 52],      // 艮
+        [50, 15, 39, 31, 45, 47, 27, 16],     // 震
+        [56, 8, 36, 41, 24, 20, 26, 17],      // 巽
+        [29, 55, 49, 63, 3, 58, 5, 12],       // 离
+        [1, 23, 18, 10, 33, 42, 4, 7],        // 坤
+        [57, 46, 44, 30, 38, 14, 61, 53]      // 兑
+      ];
+      
+      const allGuaIndexes = Array.from({length: app.globalData.sixtyFourGua.length}, (_, index) => index);
       this.setData({ 
         guaList: allGuaIndexes,
         isLoading: false,
         isDataReady: true,
-        globalGuaData: globalGuaData,
-        learningStatus: {}
+        globalGuaData: app.globalData.sixtyFourGua,
+        learningStatus: {},
+        tabGuaList: cachedTabGuaList
       });
-
-      // 数据加载完成后立即检查学习状态
       this.checkUserLearningStatus();
-
     } catch (error) {
       console.error('[gua-ci-list] 数据加载失败:', error);
       
@@ -102,12 +123,17 @@ Page({
     }
   },
 
+  // TAB切换事件 - 只更新当前TAB索引，不重新计算分组
+  onTabChange(e) {
+    const index = e.currentTarget.dataset.index;
+    this.setData({
+      currentTab: index
+    });
+  },
+
   // 卦点击事件 - 简化处理
   onGuaTap(e) {
-    const { index } = e.currentTarget.dataset;
-    const guaIndex = this.data.guaList[index] + 1; // 转换为1-64的索引
-    
-    // 直接导航到详情页，详情页会按需加载数据
+    const guaIndex = e.currentTarget.dataset.index + 1; // 1-64
     this.navigateToGuaDetail(guaIndex);
   },
 

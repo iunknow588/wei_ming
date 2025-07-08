@@ -1,45 +1,25 @@
 <view class="gua-detail-page">
   <!-- 背景图片 -->
-  <image 
-    class="background-image" 
-    src="{{gua.image}}" 
-    mode="aspectFill"
-    lazy-load="{{false}}"
-    show-menu-by-longpress="{{false}}"
-    bindload="onImageLoad"
-    binderror="onImageError"
-  />
+  <!-- 删除 gua.image 相关图片展示代码 -->
   
   <view class="gua-detail-header">
     <view class="gua-title-container">
       <text class="gua-detail-title">{{gua.simpleGuaName}}</text>
       <!-- 卦象绘制区域 -->
-      <view class="gua-symbol-container">
-        <!-- 卦象显示 -->
-        <view class="gua-symbol-new" bindtap="onCanvasTouch" tt:if="{{guaComponents}}">
-          <!-- 上三爻 -->
-          <view class="upper-trigram">
-            <view class="trigram-lines">
-              <view class="trigram-line" tt:for="{{guaComponents.upperLines}}" tt:for-item="line" tt:for-index="lineIndex">
-                <view class="line-segment {{line === 1 ? 'yang' : 'yin-left'}}"></view>
-                <view class="line-segment {{line === 1 ? 'yang' : 'yin-right'}}" tt:if="{{line === 0}}"></view>
-              </view>
-            </view>
-            <text class="bagua-name">{{guaComponents.upper}}</text>
+      <view class="gua-symbol-container" bindtap="onCanvasTouch">
+        <!-- 六爻显示（从下往上） -->
+        <view class="trigram-lines">
+          <!-- 下三爻（第1-3爻，从下往上） -->
+          <view class="trigram-line" tt:for="{{guaComponents.lowerThreeLines}}" tt:for-item="line" tt:for-index="lineIndex">
+            <view class="line-segment {{line === 1 ? 'yang' : 'yin-left'}}"></view>
+            <view class="line-segment {{line === 1 ? 'yang' : 'yin-right'}}" tt:if="{{line === 0}}"></view>
           </view>
-          
-          <!-- 中间空隙 -->
-          <view class="middle-gap"></view>
-          
-          <!-- 下三爻 -->
-          <view class="lower-trigram">
-            <view class="trigram-lines">
-              <view class="trigram-line" tt:for="{{guaComponents.lowerLines}}" tt:for-item="line" tt:for-index="lineIndex">
-                <view class="line-segment {{line === 1 ? 'yang' : 'yin-left'}}"></view>
-                <view class="line-segment {{line === 1 ? 'yang' : 'yin-right'}}" tt:if="{{line === 0}}"></view>
-              </view>
-            </view>
-            <text class="bagua-name">{{guaComponents.lower}}</text>
+          <!-- 竖直空隙 -->
+          <view class="trigram-gap"></view>
+          <!-- 上三爻（第4-6爻，从下往上） -->
+          <view class="trigram-line" tt:for="{{guaComponents.upperThreeLines}}" tt:for-item="line" tt:for-index="lineIndex">
+            <view class="line-segment {{line === 1 ? 'yang' : 'yin-left'}}"></view>
+            <view class="line-segment {{line === 1 ? 'yang' : 'yin-right'}}" tt:if="{{line === 0}}"></view>
           </view>
         </view>
       </view>
